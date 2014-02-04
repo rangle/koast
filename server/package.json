@@ -2,6 +2,12 @@
   "name": "koast",
   "version": "0.0.0",
   "description": "A Thin Server with an Attitude",
+  "contributors": [
+    {
+      "name": "Yuri Takhteyev",
+      "email": "yuri@freewisdom.org"
+    }
+  ],
   "main": "index.js",
   "bin": {
     "koast": "./bin/koast"
