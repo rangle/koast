@@ -1,0 +1,19 @@
+{
+  "portNumber": 3000,
+  "lessPaths": [
+    ["/app", "client/app"]
+  ],
+  "indexHtml" : "client/index.html",
+  "routes" : [
+    {
+      "route" : "/app",
+      "type": "static",
+      "path" : "client/app"    
+    },
+    {
+      "route" : "/api",
+      "type": "module",
+      "module" : "server/api"    
+    }
+  ]
+}
