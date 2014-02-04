@@ -1,0 +1,1 @@
+console.log('You\'ve got Koast!');
