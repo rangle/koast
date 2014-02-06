@@ -9,8 +9,11 @@ var log = require('../log');
 exports.makeExpressApp = function (appConfig) {
 
   var app = express();
+  var indexHtml;
 
-  var indexHtml = fs.readFileSync(appConfig.indexHtml).toString();
+  if (appConfig.indexHtml) {
+    indexHtml = fs.readFileSync(appConfig.indexHtml).toString();
+  }
 
   app.use(express.bodyParser());
   // authentication.apply(app, 'api/');
@@ -70,9 +73,11 @@ exports.makeExpressApp = function (appConfig) {
 
   log.verbose('Set up some routes');
 
-  app.get('/', function (req, res) {
-    res.send(202, indexHtml);
+  if (indexHtml) {
+    app.get('/', function (req, res) {
+      res.send(202, indexHtml);
 ***REMOVED***
+  }
 
   // 404 for everything else.
   app.get('*', function (req, res) {

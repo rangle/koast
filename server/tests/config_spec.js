@@ -2,7 +2,7 @@
 ***REMOVED***
 var config = require('../lib/config');
 
-config.setConfigDirectory('test/config_data/');
+config.setConfigDirectory('tests/config_data/');
 
 
 describe('Test basic config loading.', function() {

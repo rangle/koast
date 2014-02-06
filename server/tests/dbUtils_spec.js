@@ -3,10 +3,11 @@
 
 'use strict';
 ***REMOVED***
+var Q = require('q');
 var config = require('../lib/config');
 var dbUtils = require('../lib/database/dbUtils');
 
-config.setConfigDirectory('test/config_data/');
+config.setConfigDirectory('tests/config/');
 config.setEnvironment('test');
 
 var schemas = [{
@@ -46,113 +47,144 @@ var schemas = [{
   ]
 }];
 
-describe('Create a connection.', function (done) {
-  var connectionPromise;
-  var connection;
-  it('Create a connection', function (done) {
-    connectionPromise = dbUtils.createConnection('foo', config.getConfig(
-      'db'), schemas);
-    connectionPromise.then(function (connection) {
-      expect(connection).to.not.be.undefined;
+function throwError(error) {
+  throw error;
+}
+
+function testConnection(connection, name) {
+  expect(connection.port).to.equal(27017);
+  expect(connection.name).to.equal(name);
+}
+
+function testConnectionPromise(promise, name, done) {
+  expect(Q.isPromise(promise)).to.be.true;
+  promise
+    .then(function(connection) {
+      expect(connection.port).to.equal(27017);
+      expect(connection.name).to.equal(name);
       done();
     })
-      .fail(function (connection) {
-        throw 'This should not be called';
-  ***REMOVED***
-***REMOVED***
-  it('Create a connection with a callback', function (done) {
-    connectionPromise = dbUtils.createConnection('foo2',
-      config.getConfig('db'),
-      schemas,
-      function (newConnection) {
-        connection = newConnection;
-        expect(connection).to.not.be.undefined;
+    .fail(throwError);
+}
+
+describe('Testing connection.', function (done) {
+  var connectionPromise;
+  var connection;
+
+  it('Create configured connections', function (done) {
+    connectionPromise = dbUtils.createConfiguredConnections();
+    expect(Q.isPromise(connectionPromise)).to.be.true;
+    connectionPromise
+      .then(function (connections) {
+        expect(connections).to.be.an.array;
+        expect(connections.length).to.equal(2);
+        testConnection(connections[0], 'koast1');
         done();
+***REMOVED***)
+      .fail(throwError);
 ***REMOVED***
-    );
+  it('Get one of the connections', function (done) {
+    var promise = dbUtils.getConnectionPromise('db2');
+    testConnectionPromise(promise, 'koast2', done);
 ***REMOVED***
+  it('Create another connection', function (done) {
+    var promise = dbUtils.createSingleConnection('another',
+      config.getConfig('anotherDb'),
+      schemas);
+    testConnectionPromise(promise, 'koast3', done);
+***REMOVED***
+  it('Get the same connection from the module', function (done) {
+    var promise = dbUtils.getConnectionPromise('another');
+    testConnectionPromise(promise, 'koast3', done);
+***REMOVED***
+  it('Check the number of connections', function () {
+    var handles = dbUtils.getConnectionHandles();
+    expect(handles.length).to.equal(3);
+***REMOVED***
+  it('Close all connections.', function (done) {
+    dbUtils.closeAllConnectionsNow()
+      .then(function() {
+        done();
+***REMOVED***)
+      .fail(throwError);
+***REMOVED***
+  it('Create an unnamed connection.', function (done) {
+    var promise = dbUtils.createSingleConnection('_',
+      config.getConfig('anotherDb'),
+      schemas);
+    testConnectionPromise(promise, 'koast3', done);
+***REMOVED***
+  it('Get the connection without a name', function (done) {
+    var promise = dbUtils.getConnectionPromise();
+    testConnectionPromise(promise, 'koast3', done);
+***REMOVED***
+  it('Get the connection without a promise.', function () {
+    var promise = dbUtils.getConnectionNow('_');
+    testConnection(promise, 'koast3');
+***REMOVED***
+
   it('Remove old robots', function (done) {
+    connection = dbUtils.getConnectionNow();
     connection.model('robots').remove({}, function (error, result) {
       expect(error).to.not.exist;
       done();
 ***REMOVED***
 ***REMOVED***
   it('Insert a robot', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('robots').create({
-          robotNumber: 1
-  ***REMOVED*** function (error, result) {
-          expect(error).to.not.exist;
-          done();
-    ***REMOVED***
+    connection.model('robots').create({
+        robotNumber: 1
+***REMOVED*** function (error, result) {
+        expect(error).to.not.exist;
+        done();
   ***REMOVED***
 ***REMOVED***
   it('Insert the same robot again', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('robots').create({
-          robotNumber: 1
-  ***REMOVED*** function (error, result) {
-          expect(error).to.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('robots').create({
+      robotNumber: 1
+    }, function (error, result) {
+      expect(error).to.exist;
+      done();
+***REMOVED***
 ***REMOVED***
   it('Insert robot #2', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('robots').create({
-          robotNumber: 2
-  ***REMOVED*** function (error, result) {
-          expect(error).to.not.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('robots').create({
+      robotNumber: 2
+    }, function (error, result) {
+      expect(error).to.not.exist;
+      done();
+***REMOVED***
 ***REMOVED***
   it('Remove old baby robots', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('babyRobots').remove({}, function (error, result) {
-          expect(error).to.not.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('babyRobots').remove({}, function (error, result) {
+      expect(error).to.not.exist;
+      done();
+***REMOVED***
 ***REMOVED***
   it('Insert baby robot 1 (son of 1)', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('babyRobots').create({
-          parentNumber: 1,
-          babyNumber: 1
-  ***REMOVED*** function (error, result) {
-          expect(error).to.not.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('babyRobots').create({
+      parentNumber: 1,
+      babyNumber: 1
+    }, function (error, result) {
+      expect(error).to.not.exist;
+      done();
+***REMOVED***
 ***REMOVED***
   it('Insert baby robot 2 (son of 1)', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('babyRobots').create({
-          parentNumber: 1,
-          babyNumber: 2
-  ***REMOVED*** function (error, result) {
-          expect(error).to.not.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('babyRobots').create({
+      parentNumber: 1,
+      babyNumber: 2
+    }, function (error, result) {
+      expect(error).to.not.exist;
+      done();
+***REMOVED***
 ***REMOVED***
   it('Insert baby robot 2 (son of 1) again', function (done) {
-    connectionPromise
-      .then(function (connection) {
-        connection.model('babyRobots').create({
-          parentNumber: 1,
-          babyNumber: 2
-  ***REMOVED*** function (error, result) {
-          expect(error).to.exist;
-          done();
-    ***REMOVED***
-  ***REMOVED***
+    connection.model('babyRobots').create({
+      parentNumber: 1,
+      babyNumber: 2
+    }, function (error, result) {
+      expect(error).to.exist;
+      done();
+***REMOVED***
 ***REMOVED***
 ***REMOVED***
