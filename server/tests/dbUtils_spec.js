@@ -47,10 +47,6 @@ var schemas = [{
   ]
 }];
 
-function throwError(error) {
-  throw error;
-}
-
 function testConnection(connection, name) {
   expect(connection.port).to.equal(27017);
   expect(connection.name).to.equal(name);
@@ -64,7 +60,7 @@ function testConnectionPromise(promise, name, done) {
       expect(connection.name).to.equal(name);
       done();
     })
-    .fail(throwError);
+    .fail(done);
 }
 
 describe('Testing connection.', function (done) {
@@ -81,7 +77,7 @@ describe('Testing connection.', function (done) {
         testConnection(connections[0], 'koast1');
         done();
 ***REMOVED***)
-      .fail(throwError);
+      .fail(done);
 ***REMOVED***
   it('Get one of the connections', function (done) {
     var promise = dbUtils.getConnectionPromise('db2');
@@ -106,7 +102,7 @@ describe('Testing connection.', function (done) {
       .then(function() {
         done();
 ***REMOVED***)
-      .fail(throwError);
+      .fail(done);
 ***REMOVED***
   it('Create an unnamed connection.', function (done) {
     var promise = dbUtils.createSingleConnection('_',

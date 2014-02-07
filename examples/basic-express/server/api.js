@@ -1,8 +1,11 @@
 /* global exports */
 
 var koast = require('koast');
-var connection = koast.getDatabaseConnection();
+var connection = koast.getDatabaseConnectionNow();
+console.log(koast);
+var mapper = koast.makeMongoMapper(connection);
 
 exports.routes = [
-  ['get', 'robots', koast.makeMongoMapper(connection, 'robots')]
+  ['get', 'robots', mapper.get('robots')],
+  ['get', 'robots/:robotNumber', mapper.get('robots')]
 ];

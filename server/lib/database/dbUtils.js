@@ -138,7 +138,7 @@ exports.createConfiguredConnections = function (subset, callback) {
   // If subset is specified, filter the databases accordingly.
   if (subset && subset.length > 0) {
     databases = _.filter(databases, function (database) {
-      return _.contains(subset, database.key);
+      return _.contains(subset, database.handle);
 ***REMOVED***
   }
   return Q.all(_.map(databases, function (database, index) {
@@ -183,7 +183,7 @@ exports.getConnectionNow = function (handle) {
   if (connection) {
     return connection;
   } else {
-    throw 'No such connection: ' + handle;
+    throw new Error('No such connection: ' + handle);
   }
 };
 

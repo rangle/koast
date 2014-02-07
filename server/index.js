@@ -15,8 +15,9 @@ exports.getConfig = config.getConfig;
 exports.createDatabaseConnections = dbUtils.createConfiguredConnections;
 exports.getDatabaseConnectionPromise = dbUtils.getConnectionPromise;
 exports.getDatabaseConnectionNow = dbUtils.getConnectionNow;
+exports.getConnectionHandles = dbUtils.getConnectionHandles;
 
-exports.makeMongoMapper = mongoMapper.makeMongoMapper;
+exports.makeMongoMapper = mongoMapper.makeMapper;
 
 exports.getLogger = function() {
   return logger;

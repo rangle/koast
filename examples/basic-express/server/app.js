@@ -1,15 +1,14 @@
+console.log('...');
+
 var koast = require('koast');
 koast.setEnvironment('local');
 
-
 var appConfig = koast.getConfig('app');
-var dbConfig = koast.getConfig('database');
 var log = koast.getLogger();
-var schemas = require('./schemas').schemas;
 
-koast.createDatabaseConnection(dbConfig, schemas)
+koast.createDatabaseConnections()
   // Optionally insert extra steps here before setting up the app.
-  .then(function(connection) {
+  .then(function() {
     var app = koast.makeExpressApp(appConfig);
     app.listen(appConfig.portNumber);
     log.info('Listening on ', appConfig.portNumber);

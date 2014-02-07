@@ -44,11 +44,11 @@ function demand(keys) {
 function getModel() {
   return dbUtils.createConfiguredConnections()
     .then(function() {
-      var connectionNames = dbUtils.getConnectionNames();
-      if (connectionNames.length > 1) {
+      var handles = dbUtils.getConnectionHandles();
+      if (handles.length > 1) {
         demand('db');
 ***REMOVED***
-      return dbUtils.getConnection(argv.db || connectionNames[0]);
+      return dbUtils.getConnectionNow(argv.db || handles[0]);
     })
     .then(function(connection) {
       var model;
