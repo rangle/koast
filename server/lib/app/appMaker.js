@@ -21,9 +21,10 @@ exports.makeExpressApp = function (appConfig) {
   // Enable LESS.
   if (appConfig.lessPaths) {
     var lessMiddleware = require('less-middleware');
-    appConfig.lessPaths.forEach(function(pathConfig) {
+    appConfig.lessPaths.forEach(function (pathConfig) {
       // pathConfig should be an array [<mountMount>, <path>].
-      log.verbose('Enabling LESS conversion for %s mounted at %s.', pathConfig[1], pathConfig[0]);
+      log.verbose('Enabling LESS conversion for %s mounted at %s.',
+        pathConfig[1], pathConfig[0]);
       app.use(pathConfig[0], lessMiddleware({
         src: pathConfig[1]
 ***REMOVED***));
@@ -33,16 +34,17 @@ exports.makeExpressApp = function (appConfig) {
   // Setting up top level routes
   if (appConfig.routes) {
     log.verbose('Adding routes.');
-    appConfig.routes.forEach(function(routeConfig) {
-      log.verbose('    Monting %s route on %s.', routeConfig.type, routeConfig.route);
+    appConfig.routes.forEach(function (routeConfig) {
+      log.verbose('    Monting %s route on %s.', routeConfig.type,
+        routeConfig.route);
       if (routeConfig.type === 'static') {
-        app.use(routeConfig.route, express.static(routeConfig.path));        
+        app.use(routeConfig.route, express.static(routeConfig.path));
 ***REMOVED*** else if (routeConfig.type === 'module') {
         var modulePath = process.cwd() + '/' + routeConfig.module;
         log.verbose('Module path:', modulePath);
         var module = require(modulePath);
         var subRoutes = module.routes;
-        subRoutes.forEach(function(subRoute) {
+        subRoutes.forEach(function (subRoute) {
           log.verbose('Mounting on %s: ', routeConfig.route, subRoute);
           var method = subRoute[0];
           var path = routeConfig.route + '/' + subRoute[1];

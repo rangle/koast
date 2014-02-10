@@ -178,7 +178,7 @@ exports.getConnectionHandles = function () {
  * @return {Object}                A mongoose connection object.
  */
 exports.getConnectionNow = function (handle) {
-  var handle = handle || '_';
+  handle = handle || '_';
   var connection = connections[handle];
   if (connection) {
     return connection;
@@ -194,8 +194,8 @@ exports.getConnectionNow = function (handle) {
  * @return {promise}               A promise that resolves when all connections
  *                                 have been closed.
  */
-exports.closeAllConnectionsNow = function() {
-  return Q.all(_.map(connections, function(connection) {
+exports.closeAllConnectionsNow = function () {
+  return Q.all(_.map(connections, function (connection) {
     return Q.ninvoke(connection, 'close');
   }));
 };
@@ -209,7 +209,7 @@ exports.closeAllConnectionsNow = function() {
  *                                 connection object.
  */
 exports.getConnectionPromise = function (handle) {
-  var handle = handle || '_';
+  handle = handle || '_';
   var promise = connectionPromises[handle];
   if (promise) {
     return promise;

@@ -1,3 +1,5 @@
+/* global require, exports */
+
 'use strict';
 
 /**
@@ -36,7 +38,7 @@ function prepareQuery(req, requiredQueryFields, optionalQueryFields) {
   requiredQueryFields = requiredQueryFields || [];
   requiredQueryFields.forEach(function (fieldName) {
     if (!req.query[fieldName]) {
-      throw Error('Missing required field: ' + fieldName);
+      throw new Error('Missing required field: ' + fieldName);
     }
     query[fieldName] = req.query[fieldName];
 ***REMOVED***
@@ -60,14 +62,14 @@ function makeResultHandler(request, response, authorizer, options) {
       throw error;
     } else {
       if (options.postLoadProcessor) {
-        result = options.postLoadProcessor(results, response);
+        results = options.postLoadProcessor(results, response);
 ***REMOVED***
       response.setHeader('Content-Type', 'text/plain');
       if (!_.isArray(results)) {
         results = [results];
 ***REMOVED***
-      results = _.map(results, function(result) {
-        var result = {
+      results = _.map(results, function (result) {
+        result = {
           meta: {
             can: {}
     ***REMOVED***
@@ -107,7 +109,7 @@ handlerFactories.put = function (model, queryDecorator, authorizer) {
       object.save(makeResultHandler(req, res, authorizer));
 ***REMOVED***
   };
-}
+};
 
 // Makes an poster function.
 handlerFactories.post = function (model, queryDecorator, authorizer) {
@@ -116,7 +118,7 @@ handlerFactories.post = function (model, queryDecorator, authorizer) {
     assert(object, 'Failed to create an object.');
     object.save(makeResultHandler(req, res, authorizer));
   };
-}
+};
 
 // Makes an deleter function.
 handlerFactories.del = function (model, queryDecorator, authorizer) {
@@ -125,7 +127,7 @@ handlerFactories.del = function (model, queryDecorator, authorizer) {
     query = queryDecorator(query, req, res);
     model.remove(query, makeResultHandler(req, res, authorizer));
   };
-}
+};
 
 /**
  * Creates a set of factories, which can then be used to create request
@@ -145,7 +147,7 @@ exports.makeMapper = function (dbConnection) {
       var makeHandler = handlerFactories[method];
       return makeHandler(model, service.queryDecorator, service.authorizer,
         Array.prototype.slice.apply(arguments).slice(1));
-    }
+***REMOVED***
 ***REMOVED***
 
   return service;

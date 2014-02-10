@@ -1,3 +1,5 @@
+/* global require, exports, process */
+
 'use strict';
 
 var winston = require('winston');
@@ -39,9 +41,9 @@ var logger = new(winston.Logger)({
   colors: colors
 ***REMOVED***
 
-exports.setLevel = function(level) {
+exports.setLevel = function (level) {
   // Do nothing for now.
-}
+};
 
 _.keys(levels).forEach(function (level) {
   exports[level] = logger[level];
