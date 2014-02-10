@@ -1,1 +1,18 @@
-<b>Foo</b>
+
+<html ng-app='sampleKoastClientApp'>
+
+  <b>Robots:</b>
+
+  <div ng-controller='myCtrl'>
+   <ul ng-repeat="robot in robots">
+     <li>{{ robot.robotName }} <b ng-show="{{ robot.can.edit }}">*</b></li>
+   </ul>
+   <button ng-click='rename()'>Rename</button>
+  </div>
+
+  <script src="/bower/underscore/underscore-min.js"></script>
+  <script src="/bower/angular/angular.min.js"></script>
+  <script src="/app/koast.js"></script>
+  <script src="/app/app.js"></script>
+
+</html>

@@ -10,6 +10,9 @@ exports.schemas = [{
     },
     robotName: {
       type: String
+    },
+    owner: {
+      type: String
     }
   }
 }, {

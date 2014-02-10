@@ -11,6 +11,11 @@
       "path" : "client/app"    
     },
     {
+      "route" : "/bower",
+      "type": "static",
+      "path" : "client/bower_components"
+    },
+    {
       "route" : "/api",
       "type": "module",
       "module" : "server/api"    
