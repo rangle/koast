@@ -1,0 +1,12 @@
+[
+  {
+    "robotNumber": 1,
+    "robotName": "R2D2",
+    "owner": "leia"
+  },
+  {
+    "robotNumber": 2,
+    "robotName": "C-3P0",
+    "owner": "luke"
+  }
+]

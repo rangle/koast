@@ -1,12 +1,11 @@
-This is Koast's server side. It's organized as an NPM package containing
-exporting a module ("koast") and a binary (also "koast"), which offers some
+This is Koast's server side. It's organized as an NPM package providing a
+requirable module ("koast") and a binary (also "koast"), which offers some
 utilities. You cannot run the server by itself - you'll need to write a simple
-app using the koast module.
+app using the koast module. See examples in the "examples" folder in the root
+of the repository.
 
-To use the module, install koast locally:
+To use git version of the module, install it locally using npm link:
 
-  npm install <path-to-koast-repo>/server
+  https://www.npmjs.org/doc/cli/npm-link.html
 
-To use the binary, install koast globally:
-
-  sudo npm -g install <path-to-koast-repo>/server
+To use the binary, install the package globally (with -g).

@@ -1,15 +1,23 @@
-Koast is provides a base for a backend server for an Angular.js app. (It my be
+Koast provides a base for a backend server for an AngularJS app. (It my be
 useful for Javascript apps built with other frameworks as well, but our focus
 here is on Angular.) The purpose of Koast is to help you get quickly setup a
-server that would take care of things that a typical angular app would need
-(such as authentication and database access) without resorting to code
-generation.
+server that would take care of things that a typical AngularJS app would need
+(such as configuration, authentication, and database access) without resorting
+to code generation.
+
+As of mid February 2014, Koast is an early stage project – don't plan on
+putting this in production quite yet.
 
 Koast consists of two parts:
 
-- a server side npm package "koast"
-- a client-side bower package "koast" (not yet available)
+- a server side npm module "koast"
+- a client-side bower package "koast"
 
-The npm package allows you to create a server, the bower package gives you
-client side code that helps you talk to the server.
+The npm package allows you to create a server. In a typical case, you would
+write a few lines of code to instantiate and start a server, defining most of
+the functionality through configuration files, a schema file, and a module
+implementing the API.
+
+The bower package provides an AngularJS module that can helps you talk to the
+server.
 
