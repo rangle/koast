@@ -90,7 +90,6 @@ handlerFactories.get = function (model, queryDecorator, authorizer, moreArgs) {
   return function (req, res) {
     var query = prepareQuery(req, requiredQueryFields, optionalQueryFields);
     queryDecorator(query, req, res);
-    console.log(query);
     model.find(query, makeResultHandler(req, res, authorizer));
   };
 };
@@ -98,11 +97,13 @@ handlerFactories.get = function (model, queryDecorator, authorizer, moreArgs) {
 // Makes an updater function.
 handlerFactories.put = function (model, queryDecorator, authorizer) {
   return function (req, res) {
-    var query = prepareQuery(req, queryDecorator);
-    query = queryDecorator(query, req, res);
+    var query = prepareQuery(req);
+    queryDecorator(query, req, res);
     model.findOne(query, function (err, object) {
       _.keys(req.body).forEach(function (key) {
-        object[key] = req.body[key];
+        if (key !== '_id' && key !== '__v') {
+          object[key] = req.body[key];
+***REMOVED***
   ***REMOVED***
       // We are using object.save() rather than findOneAndUpdate to ensure that
       // pre middleware is triggered.

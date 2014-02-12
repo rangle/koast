@@ -1,13 +1,19 @@
 
 <html ng-app='sampleKoastClientApp'>
 
-  <b>Robots:</b>
+  <b>Available robots:</b>
 
   <div ng-controller='myCtrl'>
    <ul ng-repeat="robot in robots">
-     <li>{{ robot.robotName }} <b ng-show="{{ robot.can.edit }}">*</b></li>
+     <li ng-show="{{ robot.can.edit }}">
+      <input ng-model="robot.robotName"/>
+      <button ng-click="saveRobot(robot)">Save</button>
+      {{ robotStatus[robot.robotNumber] }}
+     </li>
+     <li ng-show="{{ !robot.can.edit }}">
+      {{ robot.robotName }}
+     </li>
    </ul>
-   <button ng-click='rename()'>Rename</button>
   </div>
 
   <script src="/bower/underscore/underscore-min.js"></script>
