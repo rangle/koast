@@ -11,8 +11,7 @@ var usage = 'Usage: $0 --env [env] <command>';
 
 var argv = optimist
   .usage(usage)
-  .
-default ('env', 'local')
+  .default ('env', 'local')
   .describe('env', 'The environment to run in.')
   .describe('col', 'Mongo collection to use.')
   .describe('db', 'The database to use.')
@@ -134,7 +133,7 @@ handlers.dump = ['Dumps all data from a mongo collection to stdio.',
 
 function dispatch() {
   var command = argv._[0];
-  var handler = handlers[command] || hanlders.help;
+  var handler = handlers[command] || handlers.help;
   var func = handler[1];
   func();
 }

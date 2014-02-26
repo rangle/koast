@@ -1,19 +1,23 @@
 
 <html ng-app='sampleKoastClientApp'>
 
-  <b>Available robots:</b>
 
   <div ng-controller='myCtrl'>
-   <ul ng-repeat="robot in robots">
-     <li ng-show="{{ robot.can.edit }}">
-      <input ng-model="robot.robotName"/>
-      <button ng-click="saveRobot(robot)">Save</button>
-      {{ robotStatus[robot.robotNumber] }}
-     </li>
-     <li ng-show="{{ !robot.can.edit }}">
-      {{ robot.robotName }}
-     </li>
-   </ul>
+
+    <h1>My favorite robot</h1>
+    <p>{{ myRobot.robotName }}</p>
+
+    <h1>All Robots</h1>
+    <ul ng-repeat="robot in robots">
+      <li ng-show="{{ robot.can.edit }}">
+        <input ng-model="robot.robotName"/>
+        <button ng-click="saveRobot(robot)">Save</button>
+        {{ robotStatus[robot.robotNumber] }}
+      </li>
+      <li ng-show="{{ !robot.can.edit }}">
+        {{ robot.robotName }}
+      </li>
+    </ul>
   </div>
 
   <script src="/bower/underscore/underscore-min.js"></script>
