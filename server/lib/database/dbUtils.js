@@ -18,7 +18,12 @@ var connectionPromises = {};
 
 // Creates a mongoDb URL based on a config object.
 function makeMongoUrl(dbConfig) {
-  return format('mongodb://%s:%d/%s', dbConfig.host, dbConfig.port, dbConfig.db);
+  var userpass = '';
+  if (dbConfig.pass) {
+    userpass = dbConfig.user + ':' + dbConfig.pass + '@';
+  }
+  return format('mongodb://%s%s:%d/%s', userpass, dbConfig.host, dbConfig.port,
+    dbConfig.db);
 }
 
 // Creates a single mongoose model with indices based on an object that defines
