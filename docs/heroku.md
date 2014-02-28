@@ -9,7 +9,7 @@ Setup a git repository with npm package.json in the root of the repository.
     git init
     npm init
 
-When running `npm init`, enter "server/app.js" as the "entry point".
+When running `npm init`, specify `server/app.js` as the “entry point.”
 
 Install Koast and create server, client, and config directories, as per
 recommended setup.
@@ -21,27 +21,30 @@ recommended setup.
     mkdir config/local
     mkdir config/production
 
-Edit client/index.html, server/app.js, config/production/app.json, etc, to your
-liking.
+Edit `client/index.html`, `server/app.js`, `config/production/app.json`, etc,
+to your liking.
 
-IMPORTANT: server/app.js should listent to the port specified by
-process.env.PORT.
+IMPORTANT: Your `server/app.js` should listent to the port specified by
+`process.env.PORT`.
 
 ## Databases
 
-If your app needs databases, set those up on mongolab and put the
-configuration info into config/production/databases.js.
+If your app needs databases, set those up on mongolab (or some other provider)
+and put the configuration info into `config/production/databases.js`.
 
 ## Bower
 
-If your app uses bower, setup bower.json file in your root directory. Run "npm
-install --save bower" to add bower to your package.json. Then add this postinstall script to your package.json:
+If your app uses bower, setup `bower.json` file in your root directory. Run
+
+    npm install --save bower
+
+to add bower to your `package.json`. Then add this postinstall script to your `package.json`:
 
     "postinstall": "./node_modules/bower/bin/bower install"
 
 ## Procfile
 
-Create a file called Procfile that reads:
+Create a file called “Procfile” that reads:
 
     web: node server/app.js
 
@@ -51,9 +54,9 @@ Test this using `foreman start`.
 
 Add and commit all the files, then create a heroku app and push the changes:
 
-  heroku create
-  git push heroku master
+    heroku create
+    git push heroku master
 
 Go to the app:
 
-  heroku open
+    heroku open
