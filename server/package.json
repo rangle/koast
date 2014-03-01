@@ -1,6 +1,6 @@
 {
   "name": "koast",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
@@ -30,7 +30,8 @@
     "mongoose": "~3.8.6",
     "async": "~0.2.10",
     "less-middleware": "~0.1.15",
-    "optimist": "~0.6.0"
+    "optimist": "~0.6.0",
+    "aws-sdk": "~2.0.0-rc10"
   },
   "devDependencies": {
     "mocha": "~1.14.0",
