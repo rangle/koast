@@ -3,8 +3,11 @@
 'use strict';
 
 ***REMOVED***
+
 var fs = require('fs');
+var Q = require('q');
 var log = require('../log');
+var browserid = require('../authentication/browserid');
 
 exports.makeExpressApp = function (appConfig) {
 
@@ -16,7 +19,6 @@ exports.makeExpressApp = function (appConfig) {
   }
 
   app.use(express.bodyParser());
-  // authentication.apply(app, 'api/');
 
   // Enable LESS.
   if (appConfig.lessPaths) {
@@ -56,6 +58,32 @@ exports.makeExpressApp = function (appConfig) {
   } else {
     log.verbose('No routes to add.');
   }
+
+  // Add authentication
+
+  function lookupUser(email) {
+    var deferred = Q.defer();
+    var user = {};
+    if (email === 'yuri@rangle.io') {
+      user = {
+        email: 'yuri@rangle.io',
+        username: 'yuri',
+        displayName: 'Yuri'
+***REMOVED***;
+    } else {
+      user = {
+        email: email,
+        isNew: true
+***REMOVED***
+    }
+    deferred.resolve({
+      valid: true,
+      user: user
+***REMOVED***
+    return deferred.promise;
+  }
+
+  app.post('/auth/browserid', browserid.makeAuthenticator(lookupUser));
 
   // Handle errors.
   app.use(function (err, req, res, next) {

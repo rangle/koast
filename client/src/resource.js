@@ -1,10 +1,10 @@
-/* global angular, _, console */
+/* global angular, _ */
 
-angular.module('koast', [])
+angular.module('koast-resource', [])
 
 // A "private" service providing a constructor for resources.
-.factory('_KoastResource', ['$q', '$http',
-  function ($q, $http) {
+.factory('_KoastResource', ['$q', '$http', '$log',
+  function ($q, $http, $log) {
     'use strict';
     // A client side representation of a saveable RESTful resource instance.
     function Resource(endpoint, result) {
@@ -30,10 +30,10 @@ angular.module('koast', [])
 
     // A method for saving the resource
     Resource.prototype.save = function () {
-      console.log('The endpoint: ', this._endpoint);
+      $log.debug('The endpoint: ', this._endpoint);
       var url = this._endpoint.makeGetUrl(this);
-      console.log('url:', url);
-      console.log('body:', this);
+      $log.debug('url:', url);
+      $log.debug('body:', this);
       return $http.put(url, this);
 ***REMOVED***
 
@@ -90,8 +90,9 @@ angular.module('koast', [])
   }
 ])
 
-// The public service for use by the developer.
-.factory('koast', ['_KoastResource', '_KoastEndpoint', '$http', '$q', '$log',
+// A service that offers high level methods for interacting with resources.
+.factory('_koastResourceGetter', ['_KoastResource', '_KoastEndpoint', '$http',
+  '$q', '$log',
   function (KoastResource, KoastEndpoint, $http, $q, $log) {
     'use strict';
     var service = {};
