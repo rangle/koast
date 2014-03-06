@@ -31,7 +31,8 @@
     "async": "~0.2.10",
     "less-middleware": "~0.1.15",
     "optimist": "~0.6.0",
-    "aws-sdk": "~2.0.0-rc10"
+    "aws-sdk": "~2.0.0-rc10",
+    "crypto": "0.0.3"
   },
   "devDependencies": {
     "mocha": "~1.14.0",

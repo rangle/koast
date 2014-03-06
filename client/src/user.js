@@ -45,13 +45,24 @@ angular.module('koast-user', [])
         assertion: assertion,
         audience: 'http://localhost:3000/'
 ***REMOVED***;
-      return $http.post('/auth/browserid', postParams)
+      var config = {
+        timeout: 2000
+***REMOVED***;
+      return $http.post('/auth/browserid', postParams, config)
         .then(function (response) {
+          $log.debug('Response:', response);
           return response.data;
 ***REMOVED***)
         .then(null, function (error) {
-          $log.error(error);
-          throw error;
+          if (typeof error === 'object' && error.headers) {
+            // This is angular's weird way of letting us know about a timeout!
+            $log.error('Persona verification timed out.');
+            throw new Error ('Persona verification timed out.');
+  ***REMOVED*** else {
+            $log.error('Error verifying Persona assertion:', error.toString());
+            $log.error(error.stack);
+            throw error;
+  ***REMOVED***
     ***REMOVED***
     }
 
@@ -149,33 +160,56 @@ angular.module('koast-user', [])
 ])
 
 // A "private" service that represents the user.
-.factory('_koastUser', ['_koastPersona', '$log', '$timeout',
-  function (koastPersona, $log, $timeout) {
+.factory('_koastUser', ['_koastPersona', '$q', '$log', '$timeout',
+  function (koastPersona, $q, $log, $timeout) {
     'use strict';
 
     var user = {
-      signedIn: false
+      isSignedIn: false
 ***REMOVED***
     var registrationHandler;
+    var deferredSignIn = $q.defer();
 
-    // user.data is where the actual user data fields go. E.g., user.data.email. 
-    user.data = {};
+    if (window.sessionStorage.userMeta) {
+      $log.debug('sessionStorage.userMeta:', window.sessionStorage.userMeta);
+      $log.debug('sessionStorage.userData:', window.sessionStorage.userData);
+      user.isSignedIn = true;
+      user.meta = angular.fromJson(window.sessionStorage.userMeta) || {};
+      user.data = angular.fromJson(window.sessionStorage.userData) || {};
+      deferredSignIn.resolve();
+    } else {
+      user.isSignedIn = false;
+      user.data = {};
+      user.meta = {};
+    }
 
     // Initiates the user service. Right now this means we load Mozilla Persona.
     user.init = function (options) {
       $log.debug('koastUser.init');
-      options.onSignIn = function (userData) {
-        angular.extend(user.data, userData);
-        if (user.isNew && registrationHandler) {
-          $timeout(registrationHandler, 0);
+      options.onSignIn = function (response) {
+        user.data = response.data;
+        user.meta = response.meta;
+        $log.debug('user.data:', user.data);
+        $log.debug('user.meta:', user.meta);
+        window.sessionStorage.userData = angular.toJson(user.data);
+        window.sessionStorage.userMeta = angular.toJson(user.meta);
+        if (user.meta.isNew && registrationHandler) {
+          $log.debug('scheduling the registration handler');
+          $timeout(function() {
+            registrationHandler()
+              .then(deferredSignIn.resolve, $log.error);
+    ***REMOVED*** 0);
+***REMOVED*** else {
+          $log.debug('Resolving deferredSignIn.');
+          deferredSignIn.resolve();
 ***REMOVED***
-        user.signedIn = true;
+        user.isSignedIn = true;
 ***REMOVED***;
       options.onSignOut = function () {
         $log.debug('onSignOut');
         $timeout(function() {
           user.data = {};
-          user.signedIn = false;
+          user.isSignedIn = false;
     ***REMOVED***
 ***REMOVED***;
       koastPersona.init(options);
@@ -195,6 +229,11 @@ angular.module('koast-user', [])
     // have a new user.
     user.setRegistrationHanler = function (handler) {
       registrationHandler = handler;
+***REMOVED***
+
+    // Returns a promise that resolves when a user is logged in.
+    user.whenSignedIn = function() {
+      return deferredSignIn.promise;
 ***REMOVED***
 
     return user;

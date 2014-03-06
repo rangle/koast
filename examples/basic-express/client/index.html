@@ -1,4 +1,3 @@
-
 <html ng-app='sampleKoastClientApp'>
   <head>
     <script src="/bower/angular/angular.min.js"></script>
@@ -7,15 +6,15 @@
   <body>
     <div ng-controller='myCtrl'>
 
-      <div ng-cloak>Signed in? {{ user.signedIn}}</div>
+      <div ng-cloak>Signed in? {{ user.isSignedIn}}</div>
       <div ng-show='user.isReady'>
-        <div ng-hide='user.signedIn'>
+        <div ng-hide='user.isSignedIn'>
           <button ng-click='signIn()'>Sign in / Sign up</button>
         </div>
-        <div ng-show='user.signedIn'>
+        <div ng-show='user.isSignedIn'>
           Welcome,
           <span ng-hide='user.data.username'>{{ user.data.email }}!</span>
-          <span ng-show='user.data.username'>{{ user.data.username }}!</span>
+          <span ng-show='user.data.displayName'>{{ user.data.displayName }}!</span>
           <button ng-click='signOut()'>Sign out</button>
         </div>
       </div>

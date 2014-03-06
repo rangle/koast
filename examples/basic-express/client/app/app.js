@@ -2,8 +2,8 @@
 
 angular.module('sampleKoastClientApp', ['koast'])
 
-.controller('myCtrl', ['$scope', 'koast', '$timeout',
-  function ($scope, koast, $timeout) {
+.controller('myCtrl', ['$scope', 'koast', '$timeout', '$log',
+  function ($scope, koast, $timeout, $log) {
     'use strict';
 
     // Attach the user service to the scope.
@@ -13,12 +13,20 @@ angular.module('sampleKoastClientApp', ['koast'])
     // we've got a new user that needs to be registered.
     koast.user.setRegistrationHanler(function () {
       var username;
+      var displayName;
+      var deferred = $q.defer();
       username = koast.user.data.email.split('@')[0];
       username += '-' + Math.floor(Math.random() * 10000);
+      displayName = 'N' + Math.floor(Math.random() * 10000);
       $timeout(function () {
-        window.alert('You need a username. We picked "' + username + '"');
+        var message = 'You need a username and a display name. We picked "' +
+           username + '" and "' + displayName +'"!';
+        window.alert(message);
         koast.user.data.username = username;
+        koast.user.data.displayName = displayName;
+        deferred.resolve();
 ***REMOVED*** 1);
+      return deferred.promise;
 ***REMOVED***
 
     // Add sign in and sign out functions.
@@ -31,33 +39,39 @@ angular.module('sampleKoastClientApp', ['koast'])
       koast.user.signOut();
 ***REMOVED***
 
-    // Now onto robots, which is our data.
-    $scope.robotStatus = {};
+    koast.user.whenSignedIn()
+      .then(function() {
 
-    // Saves a robot upon button click.
-    $scope.saveRobot = function (robot) {
-      robot.save()
-        .then(function (response) {
-          $scope.robotStatus[robot.robotNumber] = 'Success!';
-  ***REMOVED*** function (error) {
-          $scope.robotStatus[robot.robotNumber] = 'Oops:' + error.toString();
-    ***REMOVED***
-***REMOVED***
+        console.log('Looks like the user is signed in now.');
 
-    // Request one robot from the server.
-    koast.getResource('robots', {
-      robotNumber: 1
-    })
-      .then(function (robot) {
-        $scope.myRobot = robot;
-  ***REMOVED***
+        // Now onto robots, which is our data.
+        $scope.robotStatus = {};
 
-    // Request all robots from the server.
-    koast.queryForResources('robots')
-      .then(function (robots) {
-        $scope.robots = robots;
-  ***REMOVED***
+        // Saves a robot upon button click.
+        $scope.saveRobot = function (robot) {
+          robot.save()
+            .then(function (response) {
+              $scope.robotStatus[robot.robotNumber] = 'Success!';
+      ***REMOVED*** function (error) {
+              $scope.robotStatus[robot.robotNumber] = 'Oops:' + error.toString();
+        ***REMOVED***
+***REMOVED***;
 
+        // Request one robot from the server.
+        koast.getResource('robots', {
+          robotNumber: 1
+***REMOVED***)
+          .then(function (robot) {
+            $scope.myRobot = robot;
+    ***REMOVED*** $log.error);
+
+        // Request all robots from the server.
+        koast.queryForResources('robots')
+          .then(function (robots) {
+            $scope.robots = robots;
+    ***REMOVED*** $log.error);
+***REMOVED***)
+      .then(null, $log.error);
   }
 ])
 

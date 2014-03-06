@@ -1,6 +1,6 @@
 /* global angular, _ */
 
-angular.module('koast-resource', [])
+angular.module('koast-resource', ['koast-user'])
 
 // A "private" service providing a constructor for resources.
 .factory('_KoastResource', ['$q', '$http', '$log',
@@ -91,9 +91,9 @@ angular.module('koast-resource', [])
 ])
 
 // A service that offers high level methods for interacting with resources.
-.factory('_koastResourceGetter', ['_KoastResource', '_KoastEndpoint', '$http',
-  '$q', '$log',
-  function (KoastResource, KoastEndpoint, $http, $q, $log) {
+.factory('_koastResourceGetter', ['_koastUser', '_KoastResource',
+  '_KoastEndpoint', '$http', '$q', '$log',
+  function (user, KoastResource, KoastEndpoint, $http, $q, $log) {
     'use strict';
     var service = {};
     var prefix;
@@ -104,6 +104,7 @@ angular.module('koast-resource', [])
     function get(endpointHandle, params, query, options) {
       var deferred = $q.defer();
       var endpoint = endpoints[endpointHandle];
+      var headers = {};
 
       options = options || {};
 
@@ -111,8 +112,17 @@ angular.module('koast-resource', [])
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
+      console.log('Token:', user.meta.authToken);
+
+      if (user.isSignedIn) {
+        headers['koast-auth-token'] = user.meta.authToken;
+        headers['koast-auth-token-timestamp'] = user.meta.timestamp;
+        headers['koast-user'] = angular.toJson(user.data);
+***REMOVED***
+      console.log('Headers:', headers);
       $http.get(endpoint.makeGetUrl(params), {
-        params: query
+        params: query,
+        headers: headers
 ***REMOVED***)
         .success(function (result) {
           var resources = [];

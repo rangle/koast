@@ -20,7 +20,7 @@ function makeVerifierRequest(body, callback) {
 exports.makeAuthenticator = function (userLookupFunction) {
 
   return function browserIdAuthenticator(req, res) {
-    console.log('/auth/browserid');
+    log.debug('/auth/browserid');
     makeVerifierRequest({
         assertion: req.body.assertion,
         audience: req.body.audience
@@ -29,21 +29,29 @@ exports.makeAuthenticator = function (userLookupFunction) {
         var body = '';
         verifierResponse
           .on('data', function (chunk) {
+            log.debug('-');
             body += chunk;
   ***REMOVED***)
           .on('end', function () {
             var json;
+            log.debug('end');
             try {
               json = JSON.parse(body);
+              log.debug(json);
               if (json && json.status==='okay') {
                 userLookupFunction(json.email)
                   .then(function(result) {
                     if (result.valid) {
-                      console.log('user:', result.user);
+                      log.debug('user:', result.user);
                       res.send(200, result.user);                      
         ***REMOVED*** else {
                       res.send(401, 'Access denied.');
         ***REMOVED***
+      ***REMOVED***)
+                  .then(null, function(error) {
+                    log.debug('user lookup error:', error.toString());
+                    log.debug(error.stack);
+                    res.send(500, 'Oops.');
               ***REMOVED***
   ***REMOVED*** else {
                 res.send(401, 'Persona assertion verification failed.');
@@ -51,10 +59,14 @@ exports.makeAuthenticator = function (userLookupFunction) {
 ***REMOVED*** catch (e) {
               log.error('Persona authentication error: ' + e.toString());
               log.error(e.stack);
-              res.send(500, 'Oops: ' + e.toString());
+              res.send(500, 'Oops.');
 ***REMOVED***
+  ***REMOVED***)
+          .on('error', function (error) {
+            log.error('Error in persona server response:', error.toString());
+            res.send(500, 'Oops.');
       ***REMOVED***
   ***REMOVED***
-    console.log('verifying assertion!');
+    log.debug('verifying assertion!');
   }
 }

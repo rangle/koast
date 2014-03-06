@@ -1,6 +1,24 @@
 /* global exports */
 
 exports.schemas = [{
+  name: 'users',
+  properties: {
+    email: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    displayName: {
+      type: String,
+      required: true
+    }
+  }
+}, {
   name: 'robots',
   properties: {
     robotNumber: {

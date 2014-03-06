@@ -10,7 +10,9 @@ mapper.queryDecorator = function(query, req, res) {
 };
 
 mapper.authorizer = function(result, req, res) {
-  if (result.data.owner === 'luke') {
+  var username = req.user && req.user.username;
+  console.log('user:', username || 'anonymous');
+  if (username && (result.data.owner === username)) {
     result.meta.can.edit = true;
   }
 }
