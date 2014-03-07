@@ -125,8 +125,8 @@ handlerFactories.post = function (model, queryDecorator, authorizer) {
 // Makes an deleter function.
 handlerFactories.del = function (model, queryDecorator, authorizer) {
   return function (req, res) {
-    var query = prepareQuery(req, queryDecorator);
-    query = queryDecorator(query, req, res);
+    var query = prepareQuery(req);
+    queryDecorator(query, req, res);
     model.remove(query, makeResultHandler(req, res, authorizer));
   };
 };

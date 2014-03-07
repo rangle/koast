@@ -2,9 +2,24 @@
 
 angular.module('koast-resource', ['koast-user'])
 
+.factory('_KoastServerHelper', ['_koastUser',
+  function(user) {
+    var service = {};
+    service.addAuthHeaders = function (headers) {
+      console.log('Token:', user.meta.authToken);
+      if (user.isSignedIn) {
+        headers['koast-auth-token'] = user.meta.authToken;
+        headers['koast-auth-token-timestamp'] = user.meta.timestamp;
+        headers['koast-user'] = angular.toJson(user.data);
+***REMOVED***
+      console.log('Headers:', headers);
+***REMOVED***
+    return service;
+  }])
+
 // A "private" service providing a constructor for resources.
-.factory('_KoastResource', ['$q', '$http', '$log',
-  function ($q, $http, $log) {
+.factory('_KoastResource', ['_KoastServerHelper', '$q', '$http', '$log',
+  function (KoastServerHelper, $q, $http, $log) {
     'use strict';
     // A client side representation of a saveable RESTful resource instance.
     function Resource(endpoint, result) {
@@ -30,11 +45,20 @@ angular.module('koast-resource', ['koast-user'])
 
     // A method for saving the resource
     Resource.prototype.save = function () {
+      var url = this._endpoint.makeGetUrl(this);
+      var headers = {};
+      KoastServerHelper.addAuthHeaders(headers);
+      return $http.put(url, this, {headers: headers***REMOVED***
+***REMOVED***
+
+    // A method for deleting the resource
+    Resource.prototype.delete = function () {
       $log.debug('The endpoint: ', this._endpoint);
       var url = this._endpoint.makeGetUrl(this);
-      $log.debug('url:', url);
-      $log.debug('body:', this);
-      return $http.put(url, this);
+      $log.debug('delete url:', url);
+      var headers = {};
+      KoastServerHelper.addAuthHeaders(headers);
+      return $http.delete(url, {headers: headers***REMOVED***
 ***REMOVED***
 
     return Resource;
@@ -91,24 +115,13 @@ angular.module('koast-resource', ['koast-user'])
 ])
 
 // A service that offers high level methods for interacting with resources.
-.factory('_koastResourceGetter', ['_koastUser', '_KoastResource',
+.factory('_koastResourceGetter', ['_KoastResource', '_KoastServerHelper',
   '_KoastEndpoint', '$http', '$q', '$log',
-  function (user, KoastResource, KoastEndpoint, $http, $q, $log) {
+  function (KoastResource, KoastServerHelper, KoastEndpoint, $http, $q, $log) {
     'use strict';
     var service = {};
     var prefix;
     var endpoints = {};
-
-
-    function addAuthHeaders(headers) {
-      console.log('Token:', user.meta.authToken);
-      if (user.isSignedIn) {
-        headers['koast-auth-token'] = user.meta.authToken;
-        headers['koast-auth-token-timestamp'] = user.meta.timestamp;
-        headers['koast-user'] = angular.toJson(user.data);
-***REMOVED***
-      console.log('Headers:', headers);
-    }
 
     // An auxiliary function that actually gets the resource. This should work
     // for either a request to get a single item or a query for multiple.
@@ -122,7 +135,7 @@ angular.module('koast-resource', ['koast-user'])
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
-      addAuthHeaders(headers);
+      KoastServerHelper.addAuthHeaders(headers);
 
       $http.get(endpoint.makeGetUrl(params), {
         params: query,
@@ -185,7 +198,7 @@ angular.module('koast-resource', ['koast-user'])
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
-      addAuthHeaders(headers);
+      KoastServerHelper.addAuthHeaders(headers);
 
       $http.post(endpoint.makePostUrl(), data, {
         headers: headers

@@ -27,6 +27,7 @@
         <li ng-show="{{ robot.can.edit }}">
           <input ng-model="robot.robotName"/>
           <button ng-click="saveRobot(robot)">Save</button>
+          <button ng-click="deleteRobot(robot)">Delete</button>
           {{ robotStatus[robot.robotNumber] }}
         </li>
         <li ng-show="{{ !robot.can.edit }}">
