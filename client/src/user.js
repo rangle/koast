@@ -46,7 +46,7 @@ angular.module('koast-user', [])
         audience: 'http://localhost:3000/'
 ***REMOVED***;
       var config = {
-        timeout: 2000
+        timeout: 5000
 ***REMOVED***;
       return $http.post('/auth/browserid', postParams, config)
         .then(function (response) {
@@ -174,8 +174,15 @@ angular.module('koast-user', [])
       $log.debug('sessionStorage.userMeta:', window.sessionStorage.userMeta);
       $log.debug('sessionStorage.userData:', window.sessionStorage.userData);
       user.isSignedIn = true;
-      user.meta = angular.fromJson(window.sessionStorage.userMeta) || {};
-      user.data = angular.fromJson(window.sessionStorage.userData) || {};
+      try {
+        user.meta = angular.fromJson(window.sessionStorage.userMeta) || {};
+        user.data = angular.fromJson(window.sessionStorage.userData) || {};
+***REMOVED*** catch (e) {
+        $log.error('Failed to parse user data from sessionStorage.');
+        user.isSignedIn = false;
+        user.meta = {};
+        user.dat = {};
+***REMOVED***
       deferredSignIn.resolve();
     } else {
       user.isSignedIn = false;
@@ -207,10 +214,8 @@ angular.module('koast-user', [])
 ***REMOVED***;
       options.onSignOut = function () {
         $log.debug('onSignOut');
-        $timeout(function() {
-          user.data = {};
-          user.isSignedIn = false;
-    ***REMOVED***
+        // Nothing to do here, since we should have already signed out the
+        // user before calling Persona.
 ***REMOVED***;
       koastPersona.init(options);
       koastPersona.whenReady()
@@ -223,7 +228,16 @@ angular.module('koast-user', [])
     user.signIn = koastPersona.initiateSignIn;
 
     // Initiates signOut - just calls persona's function.
-    user.signOut = koastPersona.initiateSignOut;
+    user.signOut = function () {
+      $timeout(function() {
+        user.data = {};
+        user.meta = {};
+        window.sessionStorage.userData = '{}';
+        window.sessionStorage.userMeta = '{}';
+        user.isSignedIn = false;
+  ***REMOVED***
+      koastPersona.initiateSignOut();
+***REMOVED***
 
     // Attaches a registration handler - afunction that will be called when we
     // have a new user.
