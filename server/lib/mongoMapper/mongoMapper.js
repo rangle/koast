@@ -8,7 +8,7 @@
 
 var _ = require('underscore');
 var assert = require('assert');
-//var log = require('../log');
+var log = require('../log');
 
 var handlerFactories = {};
 
@@ -59,7 +59,8 @@ function makeResultHandler(request, response, authorizer, options) {
   options = options || {};
   return function (error, results) {
     if (error) {
-      throw error;
+      log.error(error);
+      response.send(500, 'Database error: ', error.toString());
     } else {
       if (options.postLoadProcessor) {
         results = options.postLoadProcessor(results, response);

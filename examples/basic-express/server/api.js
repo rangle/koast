@@ -21,4 +21,6 @@ exports.routes = [
   ['get', 'robots', mapper.get('robots', [])],
   ['get', 'robots/:robotNumber', mapper.get('robots')],
   ['put', 'robots/:robotNumber', mapper.put('robots', ['robotNumber'])],
+  ['post', 'robots', mapper.post('robots')],
+
 ];

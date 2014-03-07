@@ -99,6 +99,17 @@ angular.module('koast-resource', ['koast-user'])
     var prefix;
     var endpoints = {};
 
+
+    function addAuthHeaders(headers) {
+      console.log('Token:', user.meta.authToken);
+      if (user.isSignedIn) {
+        headers['koast-auth-token'] = user.meta.authToken;
+        headers['koast-auth-token-timestamp'] = user.meta.timestamp;
+        headers['koast-user'] = angular.toJson(user.data);
+***REMOVED***
+      console.log('Headers:', headers);
+    }
+
     // An auxiliary function that actually gets the resource. This should work
     // for either a request to get a single item or a query for multiple.
     function get(endpointHandle, params, query, options) {
@@ -107,19 +118,12 @@ angular.module('koast-resource', ['koast-user'])
       var headers = {};
 
       options = options || {};
-
       if (!endpoint) {
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
-      console.log('Token:', user.meta.authToken);
+      addAuthHeaders(headers);
 
-      if (user.isSignedIn) {
-        headers['koast-auth-token'] = user.meta.authToken;
-        headers['koast-auth-token-timestamp'] = user.meta.timestamp;
-        headers['koast-user'] = angular.toJson(user.data);
-***REMOVED***
-      console.log('Headers:', headers);
       $http.get(endpoint.makeGetUrl(params), {
         params: query,
         headers: headers
@@ -168,6 +172,39 @@ angular.module('koast-resource', ['koast-user'])
       return get(endpointHandle, params, null, {
         singular: true
   ***REMOVED***
+***REMOVED***
+
+
+    function post(endpointHandle, data, options) {
+      var deferred = $q.defer();
+      var endpoint = endpoints[endpointHandle];
+      var headers = {};
+
+      options = options || {};
+      if (!endpoint) {
+        throw new Error('Unknown endpoint: ' + endpointHandle);
+***REMOVED***
+
+      addAuthHeaders(headers);
+
+      $http.post(endpoint.makePostUrl(), data, {
+        headers: headers
+***REMOVED***)
+        .success(function (result) {
+          deferred.resolve(result);
+***REMOVED***)
+        .error(function (error) {
+          deferred.reject(error);
+    ***REMOVED***
+      return deferred.promise;
+    }
+
+
+    service.createResource = function (endpointHandle, body) {
+      return post(endpointHandle, body)
+        .then(function(result) {
+          console.log(result)
+  ***REMOVED*** $log.error);
 ***REMOVED***
 
     /**

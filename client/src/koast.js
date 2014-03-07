@@ -10,6 +10,7 @@ angular.module('koast', ['koast-user', 'koast-resource'])
     var resourceGetterMethodsToCopy = [
       'setApiUriPrefix',
       'getResource',
+      'createResource',
       'queryForResources',
       'addEndpoint'
     ];
