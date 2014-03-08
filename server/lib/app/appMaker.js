@@ -49,7 +49,6 @@ exports.makeExpressApp = function (appConfig) {
         var module = require(modulePath);
         var subRoutes = module.routes;
         subRoutes.forEach(function (subRoute) {
-          log.verbose('Mounting on %s: ', routeConfig.route, subRoute);
           var method = subRoute[0];
           var path = routeConfig.route + '/' + subRoute[1];
           var handler = subRoute[2];
