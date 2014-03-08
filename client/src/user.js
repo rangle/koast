@@ -3,8 +3,8 @@
 angular.module('koast-user', [])
 
 // A "private" service that works as a wrapper around Mozilla's Persona.
-.factory('_koastPersona', ['$http', '$q', '$interval', '$log',
-  function ($http, $q, $interval, $log) {
+.factory('_koastPersona', ['$http', '$q', '$interval', '$location', '$log',
+  function ($http, $q, $interval, $location, $log) {
     'use strict';
 
     var service = {};
@@ -41,10 +41,12 @@ angular.module('koast-user', [])
     // Verifies a persona assertion by 
     function verifyAssertion(assertion) {
       $log.debug('verifyAssertion:');
+      var audience = $location.absUrl().split('/').slice(0,3).join('/') + '/';
       var postParams = {
         assertion: assertion,
-        audience: 'http://localhost:3000/'
+        audience: audience
 ***REMOVED***;
+      $log.info('audience:', audience);
       var config = {
         timeout: 5000
 ***REMOVED***;
