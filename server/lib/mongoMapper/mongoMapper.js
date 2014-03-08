@@ -55,20 +55,26 @@ function prepareQuery(req, requiredQueryFields, optionalQueryFields) {
 }
 
 // Makes a result handler for mongo queries.
-function makeResultHandler(request, response, authorizer, options) {
+function makeResultHandler(request, response, filter, authorizer, options) {
   options = options || {};
   return function (error, results) {
     if (error) {
       log.error(error);
       response.send(500, 'Database error: ', error.toString());
     } else {
+
       if (options.postLoadProcessor) {
         results = options.postLoadProcessor(results, response);
 ***REMOVED***
+
       response.setHeader('Content-Type', 'text/plain');
       if (!_.isArray(results)) {
         results = [results];
 ***REMOVED***
+      results = _.filter(results, function(result) {
+        return filter(result, request);
+  ***REMOVED***
+
       results = _.map(results, function (result) {
         result = {
           meta: {
@@ -85,22 +91,29 @@ function makeResultHandler(request, response, authorizer, options) {
 }
 
 // Makes a getter function.
-handlerFactories.get = function (model, queryDecorator, authorizer, moreArgs) {
+handlerFactories.get = function (model, queryDecorator, filter, authorizer, moreArgs) {
   var requiredQueryFields = moreArgs[0];
   var optionalQueryFields = moreArgs[1];
   return function (req, res) {
     var query = prepareQuery(req, requiredQueryFields, optionalQueryFields);
     queryDecorator(query, req, res);
-    model.find(query, makeResultHandler(req, res, authorizer));
+    model.find(query).lean().exec(makeResultHandler(req, res, filter, authorizer));
   };
 };
 
 // Makes an updater function.
-handlerFactories.put = function (model, queryDecorator, authorizer) {
+handlerFactories.put = function (model, queryDecorator, filter, authorizer) {
   return function (req, res) {
     var query = prepareQuery(req);
     queryDecorator(query, req, res);
     model.findOne(query, function (err, object) {
+
+      if (!object) {
+        return res.send(404, 'Resource not found.');
+***REMOVED*** else if (!filter(object, req)) {
+        return res.send(401, 'Not allowed to PUT.');
+***REMOVED***
+
       _.keys(req.body).forEach(function (key) {
         if (key !== '_id' && key !== '__v') {
           object[key] = req.body[key];
@@ -108,26 +121,31 @@ handlerFactories.put = function (model, queryDecorator, authorizer) {
   ***REMOVED***
       // We are using object.save() rather than findOneAndUpdate to ensure that
       // pre middleware is triggered.
-      object.save(makeResultHandler(req, res, authorizer));
+      object.save(makeResultHandler(req, res, filter, authorizer));
 ***REMOVED***
   };
 };
 
 // Makes an poster function.
-handlerFactories.post = function (model, queryDecorator, authorizer) {
+handlerFactories.post = function (model, queryDecorator, filter, authorizer) {
   return function (req, res) {
     var object = model(req.body);
-    assert(object, 'Failed to create an object.');
-    object.save(makeResultHandler(req, res, authorizer));
+    if (!filter(object, req)) {
+      return res.send(401, 'Not allowed to POST.');
+    }
+    if (!object) {
+      return res.send(500, 'Failed to create an object.');
+    }
+    object.save(makeResultHandler(req, res, filter, authorizer));
   };
 };
 
 // Makes an deleter function.
-handlerFactories.del = function (model, queryDecorator, authorizer) {
+handlerFactories.del = function (model, queryDecorator, filter, authorizer) {
   return function (req, res) {
     var query = prepareQuery(req);
     queryDecorator(query, req, res);
-    model.remove(query, makeResultHandler(req, res, authorizer));
+    model.remove(query, makeResultHandler(req, res, filter, authorizer));
   };
 };
 
@@ -141,13 +159,14 @@ handlerFactories.del = function (model, queryDecorator, authorizer) {
 exports.makeMapper = function (dbConnection) {
   var service = {};
   service.queryDecorator = function () {}; // The default is to do nothing.
+  service.filter = function() { return true; } // The default is to allow everything.
   service.authorizer = function () {}; // The default is to do nothing.
 
   ['get', 'post', 'put', 'del'].forEach(function (method) {
     service[method] = function (modelName) {
       var model = dbConnection.model(modelName);
       var makeHandler = handlerFactories[method];
-      return makeHandler(model, service.queryDecorator, service.authorizer,
+      return makeHandler(model, service.queryDecorator, service.filter, service.authorizer,
         Array.prototype.slice.apply(arguments).slice(1));
 ***REMOVED***
 ***REMOVED***
