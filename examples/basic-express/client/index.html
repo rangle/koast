@@ -1,21 +1,27 @@
-<html ng-app='sampleKoastClientApp'>
+<html ng-app="sampleKoastClientApp">
   <head>
     <script src="/bower/angular/angular.min.js"></script>
   </head>
 
   <body>
-    <div ng-controller='myCtrl'>
 
-      <div ng-cloak>Signed in? {{ user.isSignedIn}}</div>
-      <div ng-show='user.isReady'>
-        <div ng-hide='user.isSignedIn'>
-          <button ng-click='signIn()'>Sign in / Sign up</button>
+    <div ng-controller="myCtrl">
+      <div ng-cloak>Signed in? {{ user.isAuthenticated}}</div>
+      <div ng-show="user.isReady">
+        <div ng-hide="user.isAuthenticated">
+          <button ng-click="login('facebook')">Sign in with Facebook</button>
         </div>
-        <div ng-show='user.isSignedIn'>
-          Welcome,
-          <span ng-hide='user.data.username'>{{ user.data.email }}!</span>
-          <span ng-show='user.data.displayName'>{{ user.data.displayName }}!</span>
-          <button ng-click='signOut()'>Sign out</button>
+        <div ng-show="user.isAuthenticated">
+          Display Name: {{ user.data.displayName }}
+          <button ng-click="logout()">Sign out</button>
+
+          <div ng-show="user.data.username">
+            Username: {{ user.data.username }}
+          </div>
+          <div ng-hide="user.data.username">
+            Pick a username: <input ng-model="selectedUsername" type="text"/>
+            <button ng-click="register()">Submit</button>
+          </div>
         </div>
       </div>
 
@@ -35,7 +41,7 @@
         </li>
       </ul>
 
-      <button ng-click='createRobot()'>Create a new robot</button>
+      <button ng-click="createRobot()">Create a new robot</button>
     </div>
 
     <script src="/bower/underscore/underscore-min.js"></script>

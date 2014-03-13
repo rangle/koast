@@ -5,7 +5,7 @@ exports.schemas = [{
   properties: {
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true
     },
     username: {
@@ -16,6 +16,37 @@ exports.schemas = [{
     displayName: {
       type: String,
       required: true
+    }
+  }
+}, {
+  name: 'userProviderAccounts',
+  properties: {
+    username: {
+      type: String
+    }, // Assigned by us
+    provider: {
+      type: String,
+      enum: ['google', 'twitter', 'facebook'],
+      required: true
+    },
+    idWithProvider: {
+      type: String,
+      required: true
+    }, // Assigned by the provider
+    emails: [{
+      type: String
+    }],
+    displayName: {
+      type: String
+    },
+    oauthToken: {
+      type: String
+    },
+    oauthSecret: {
+      type: String
+    },
+    tokenExpirationDate: {
+      type: Date
     }
   }
 }, {

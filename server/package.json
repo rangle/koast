@@ -1,11 +1,11 @@
 {
   "name": "koast",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
       "name": "Yuri Takhteyev",
-      "email": "yuri@freewisdom.org"
+      "email": "yuri@yto.io"
     }
   ],
   "main": "index.js",
@@ -32,7 +32,11 @@
     "less-middleware": "~0.1.15",
     "optimist": "~0.6.0",
     "aws-sdk": "~2.0.0-rc10",
-    "crypto": "0.0.3"
+    "crypto": "0.0.3",
+    "connect-mongo": "~0.4.0",
+    "passport-facebook": "~1.0.3",
+    "passport-twitter": "~1.0.2",
+    "passport-google-oauth": "~0.1.5"
   },
   "devDependencies": {
     "mocha": "~1.14.0",

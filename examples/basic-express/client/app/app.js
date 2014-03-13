@@ -6,39 +6,33 @@ angular.module('sampleKoastClientApp', ['koast'])
   function ($scope, koast, $timeout, $q, $log) {
     'use strict';
 
+    // Initiates login.
+    $scope.login = function(provider) {
+      koast.user.initiateOauthAuthentication(provider);
+***REMOVED***
+
+    // Logs out the user.
+    $scope.logout = function(provider) {
+      koast.user.logout(provider);
+***REMOVED***
+
+    // Registeres the user if the provided username is available.
+    $scope.register = function() {
+      var username = $scope.selectedUsername;
+      $log.debug(username);
+      koast.user.checkUsernameAvailability(username)
+        .then(function(isAvailable) {
+          if (isAvailable) {
+            return koast.user.register({username: username***REMOVED***
+  ***REMOVED*** else {
+            window.alert('Username taken!');
+  ***REMOVED***
+***REMOVED***)
+        .then(null, $log.error);
+***REMOVED***
+
     // Attach the user service to the scope.
     $scope.user = koast.user;
-
-    // Set the registration handler for the user. That will get fired when
-    // we've got a new user that needs to be registered.
-    koast.user.setRegistrationHanler(function () {
-      var username;
-      var displayName;
-      var deferred = $q.defer();
-      username = koast.user.data.email.split('@')[0];
-      username += '-' + Math.floor(Math.random() * 10000);
-      displayName = 'N' + Math.floor(Math.random() * 10000);
-      $timeout(function () {
-        var message = 'You need a username and a display name. We picked "' +
-           username + '" and "' + displayName +'"!';
-        window.alert(message);
-        koast.user.data.username = username;
-        koast.user.data.displayName = displayName;
-        deferred.resolve();
-***REMOVED*** 1);
-      return deferred.promise;
-***REMOVED***
-
-    // Add sign in and sign out functions.
-    $scope.signIn = function () {
-      // Maybe do something before starting sign in.
-      koast.user.signIn();
-***REMOVED***
-    $scope.signOut = function () {
-      // Maybe do something before signing the user out.
-      koast.user.signOut();
-***REMOVED***
-
 
     // Now onto robots, which is our data.
     function reload() {
@@ -50,7 +44,7 @@ angular.module('sampleKoastClientApp', ['koast'])
       $scope.robotStatus = {};
     }
 
-
+    // A factory for functions for updating robots' statuses.
     function makeRobotStatusUpdater(status, robotNumber) {
       if (status==='success') {
         return function() {
@@ -63,48 +57,51 @@ angular.module('sampleKoastClientApp', ['koast'])
 ***REMOVED***
     }
 
-    koast.user.whenSignedIn()
-      .then(function() {
+    // Saves a robot upon button click.
+    $scope.saveRobot = function (robot) {
+      robot.save()
+        .then(makeRobotStatusUpdater('success', robot.robotNumber))
+        .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
+***REMOVED***
 
-        $log.debug('Looks like the user is signed in now.');
+    // Deletes a robot.
+    $scope.deleteRobot = function (robot) {
+      robot.delete()
+        .then(makeRobotStatusUpdater('success', robot.robotNumber))
+        .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
+***REMOVED***
 
-        // Saves a robot upon button click.
-        $scope.saveRobot = function (robot) {
-          robot.save()
-            .then(makeRobotStatusUpdater('success', robot.robotNumber))
-            .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
+    // Creates a new robot and saves it.
+    $scope.createRobot = function() {
+      var newRobotData = {
+        robotNumber: 90,
+        robotName: 'Marvin90',
+        owner: 'yuri'
 ***REMOVED***;
-
-        $scope.deleteRobot = function (robot) {
-          robot.delete()
-            .then(makeRobotStatusUpdater('success', robot.robotNumber))
-            .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
-***REMOVED***;
-
-        // Create a new robot and saves it.
-        $scope.createRobot = function() {
-          var newRobotData = {
-            robotNumber: 90,
-            robotName: 'Marvin90',
-            owner: 'yuri'
-  ***REMOVED***;
-          koast.createResource('robots', newRobotData)
-            .then(function() {
-              return koast.getResource('robots', {robotNumber: 90***REMOVED***
+      koast.createResource('robots', newRobotData)
+        .then(function() {
+          return koast.getResource('robots', {robotNumber: 90***REMOVED***
 ***REMOVED***)
-            .then(function(newRobot) {
-              $scope.robots.push(newRobot);
-      ***REMOVED*** $log.error);
-***REMOVED***;
+        .then(function(newRobot) {
+          $scope.robots.push(newRobot);
+  ***REMOVED*** $log.error);
+***REMOVED***
 
-        // Request one robot from the server.
-        koast.getResource('robots', {
+    // Now onto things that execute when the controller is loaded.
+    // First we wait until user's login status is known.
+    koast.user.getStatusPromise()
+      .then(function(status) {
+        var query = {
           robotNumber: 1
-***REMOVED***)
+***REMOVED***;
+
+        // Then we request one robot from the server.
+        koast.getResource('robots', query)
           .then(function (robot) {
             $scope.myRobot = robot;
     ***REMOVED*** $log.error);
 
+        // And reload the robot list.
         reload();
 
 ***REMOVED***)
@@ -115,11 +112,11 @@ angular.module('sampleKoastClientApp', ['koast'])
 .run(['koast', '$log',
   function (koast, $log) {
     'use strict';
-    $log.info('Koast:', koast);
     koast.init({
+      baseUrl: 'http://localkoast.rangle.io:3000/',
       siteTitle: 'App Awesome'
 ***REMOVED***
-    koast.setApiUriPrefix('http://localhost:3000/api/');
+    koast.setApiUriPrefix('http://localkoast.rangle.io:3000/api/');
     koast.addEndpoint('robots', ':robotNumber');
   }
 ]);

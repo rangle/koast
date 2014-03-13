@@ -3,14 +3,13 @@
 'use strict';
 
 ***REMOVED***
-
 var fs = require('fs');
 var Q = require('q');
-var log = require('../log');
-var dbUtils = require('../database/dbUtils.js')
-var browserid = require('../authentication/browserid');
-var tokens = require('../authentication/tokens');
 
+var log = require('../log');
+var authentication = require('../authentication/authentication');
+
+// Sets up an app based on a configuration file.
 exports.makeExpressApp = function (appConfig) {
 
   var app = express();
@@ -21,6 +20,9 @@ exports.makeExpressApp = function (appConfig) {
   }
 
   app.use(express.bodyParser());
+
+  // Add handling of sessions
+  authentication.addSessionHandling(app);
 
   // Enable LESS.
   if (appConfig.lessPaths) {
@@ -52,14 +54,14 @@ exports.makeExpressApp = function (appConfig) {
           var method = subRoute[0];
           var path = routeConfig.route + '/' + subRoute[1];
           var handler = subRoute[2];
-          app[method](path, function (req, res, next) {
-            var userJson = req.headers['koast-user'];
-            if (userJson) {
-              // Not checking the validity of auth tokens for now!
-              req.user = JSON.parse(userJson);
-***REMOVED***
-            next();
-      ***REMOVED***
+          // app[method](path, function (req, res, next) {
+          //   var userJson = req.headers['koast-user'];
+          //   if (userJson) {
+          //     // Not checking the validity of auth tokens for now!
+          //     req.user = JSON.parse(userJson);
+          //   }
+          //   next();
+          // ***REMOVED***
           app[method](path, handler);
     ***REMOVED***
 ***REMOVED***
@@ -68,44 +70,8 @@ exports.makeExpressApp = function (appConfig) {
     log.verbose('No routes to add.');
   }
 
-  // Add authentication.
-  function lookupUser(email) {
-    log.debug('Looking up the user: ', email);
-    return dbUtils.getConnectionPromise()
-      .then(function(connection) {
-        return connection.model('users').find({email: email}).exec();
-***REMOVED***)
-      .then(function(results) {
-        var meta = {};
-        var data = {};
-        meta.timestamp = Date.now();
-        meta.authToken = tokens.makeToken(email, meta.timestamp, 'c0ff33');
-        if (results.length===0) {
-          data.email = email;
-          meta.isNew = true;
-***REMOVED*** else if (results.length===1) {
-          data = results[0];
-***REMOVED*** else {
-          throw new Error('Found multiple matching users.');
-***REMOVED***
-        return {
-          data: data,
-          meta: meta
-***REMOVED***;
-***REMOVED***)
-      .then(function(user) {
-        return {
-          valid: true,
-          user: user
-***REMOVED***;
-***REMOVED***)
-      .then(null, function(error) {
-        log.error('Error verifying assertion:', error);
-        log.error(error.stack);
-  ***REMOVED***
-  }
-
-  app.post('/auth/browserid', browserid.makeAuthenticator(lookupUser));
+  // Add authentication routes
+  authentication.addAuthenticationRoutes(app);
 
   // Handle errors.
   app.use(function (err, req, res, next) {
@@ -120,14 +86,13 @@ exports.makeExpressApp = function (appConfig) {
     }
 ***REMOVED***
 
-  // authentication.setupRoutes(app, '/api/oauth/');
-  // apiRoutes.setupApiRoutes(app, '/api/');
-
+  // Setup the routes
   log.verbose('Set up some routes');
 
+  // First the index file.
   if (indexHtml) {
     app.get('/', function (req, res) {
-      res.send(202, indexHtml);
+      res.send(200, indexHtml);
 ***REMOVED***
   }
 

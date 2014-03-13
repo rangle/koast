@@ -2,243 +2,130 @@
 
 angular.module('koast-user', [])
 
-// A "private" service that works as a wrapper around Mozilla's Persona.
-.factory('_koastPersona', ['$http', '$q', '$interval', '$location', '$log',
-  function ($http, $q, $interval, $location, $log) {
+// Abstracts out some OAuth-specific logic.
+.factory('_koastOauth', ['$window', '$location', '$log',
+  function ($window, $location, $log) {
     'use strict';
 
     var service = {};
-    var userInitiatedAction = false;
-    var readyDeferred = $q.defer();
+    var baseUrl = 'http://127.0.0.1:3000';
 
-    // Loads persona shim assyncronously. Per persona documentation we must
-    // load the shim from persona.org server (since the protocol is subject to
-    // change). Persona.org can be pretty slow, however, so loading the shim
-    // synchronously ruins the user experience. So, that's the reason for
-    // async loading.
-    function loadPersonaShim() {
-      var doc = window.document;
-      var head = doc.getElementsByTagName('head')[0];
-      var script = doc.createElement('script');
-      var deferred = $q.defer();
-      var interval;
-
-      script.type = 'text/javascript';
-      script.async = true;
-      script.src = 'https://login.persona.org/include.js';
-      head.appendChild(script);
-
-      interval = $interval(function () {
-        if (window.navigator.id) {
-          deferred.resolve();
-          $interval.cancel(interval);
-***REMOVED***
-***REMOVED*** 50);
-
-      return deferred.promise;
+    // Makes a URL for the OAuth provider.
+    function makeAuthUrl(provider, nextUrl) {
+      return baseUrl + 'auth/' + provider + '?next=' +
+        encodeURIComponent(nextUrl);
     }
 
-    // Verifies a persona assertion by 
-    function verifyAssertion(assertion) {
-      $log.debug('verifyAssertion:');
-      var audience = $location.absUrl().split('/').slice(0,3).join('/') + '/';
-      var postParams = {
-        assertion: assertion,
-        audience: audience
-***REMOVED***;
-      $log.info('audience:', audience);
-      var config = {
-        timeout: 5000
-***REMOVED***;
-      return $http.post('/auth/browserid', postParams, config)
-        .then(function (response) {
-          $log.debug('Response:', response);
-          return response.data;
-***REMOVED***)
-        .then(null, function (error) {
-          if (typeof error === 'object' && error.headers) {
-            // This is angular's weird way of letting us know about a timeout!
-            $log.error('Persona verification timed out.');
-            throw new Error ('Persona verification timed out.');
-  ***REMOVED*** else {
-            $log.error('Error verifying Persona assertion:', error.toString());
-            $log.error(error.stack);
-            throw error;
-  ***REMOVED***
-    ***REMOVED***
-    }
-
-    /** 
-     * Initiates sign in with Mozilla's persona. The thing to keep in mind
-     * here is that Persona sign up process is non-modal, so we don't really
-     * know what is happening there until the user either completes or cancels
-     * it. The user can be interacting with our site while Persona's sign up
-     * window is available. Not much we can do about this.
-     *
-     * @param  {Object} options    An object representing options.
-     * @return {undefined}         Noting is returned.
-     */
-    service.initiateSignIn = function (options) {
-      if (!options) {
-        options = {};
-***REMOVED***
-      $log.debug('signIn');
-      userInitiatedAction = true;
-      navigator.id.request({
-        siteName: options.siteTitle,
-        oncancel: function () {
-          $log.info('Persona login cancelled by user.');
-***REMOVED***
-  ***REMOVED***
+    // Sends the user to the provider's OAuth login page.
+    service.initiateAuthentication = function (provider) {
+      var newUrl = makeAuthUrl(provider, $location.absUrl());
+      $window.location.replace(newUrl);
 ***REMOVED***
 
-
-    /** 
-     * Initiates sign in with Mozilla's persona. In this case few things should
-     * prevent Persona from actually completing the sign out, but we don't
-     * really get to know what's going on. We just start the process here and
-     * hope for the best.
-     *
-     * @param  {Object} options    An object representing options.
-     * @return {undefined}         Noting is returned.
-     */
-    service.initiateSignOut = function () {
-      userInitiatedAction = true;
-      navigator.id.logout();
-***REMOVED***
-
-    /**
-     * Initializes persona. This method will request persona JS shim from the
-     * server and set it up when the shim arrives. Once we setup Persona
-     * watch, it may call onlogin or onlogout before any user action.
-     * In our case we just ignore those calls. In other words, we do not care
-     * whether Persona thinks the user is already logged in or not. We only
-     * want to know about logins and logouts that are activated by the user.
-     * This method returns a promise that resolves when persona is fully ready.
-     *
-     * @param  {Object} options    An object representing options.
-     * @return {promise}           A $q promise that resolves when persona is
-     *                             ready.
-     */
-    service.init = function (options) {
-      loadPersonaShim()
-        .then(function () {
-          $log.debug('navigator.id.watch added');
-          navigator.id.watch({
-            loggedInUser: null, // to block autologin
-            onlogin: function (assertion) {
-              if (userInitiatedAction) {
-                verifyAssertion(assertion)
-                  .then(function (user) {
-                    options.onSignIn(user);
-            ***REMOVED*** $log.error);
-  ***REMOVED***
-      ***REMOVED***
-            onlogout: function () {
-              if (userInitiatedAction) {
-                options.onSignOut();
-  ***REMOVED***
-      ***REMOVED***
-            onready: function () {
-              readyDeferred.resolve();
-***REMOVED***
-      ***REMOVED***
-***REMOVED***)
-        .then(null, $log.error);
-      return readyDeferred.promise;
-***REMOVED***
-
-    /**
-     * Returns a promise that resolves when persona is ready.
-     * @return {promise}           A $q promise that returns when persona is
-     *                             ready.
-     */
-    service.whenReady = function () {
-      return readyDeferred.promise;
+    // Sets a new base URL
+    service.setBaseUrl = function (newBaseUrl) {
+      baseUrl = newBaseUrl;
 ***REMOVED***
 
     return service;
   }
 ])
 
-// A "private" service that represents the user.
-.factory('_koastUser', ['_koastPersona', '$q', '$log', '$timeout',
-  function (koastPersona, $q, $log, $timeout) {
+// A service that represents the logged in user.
+.factory('_koastUser', ['_koastOauth', '$log', '$timeout', '$http', '$window',
+  function (koastOauth, $log, $timeout, $http, $window) {
     'use strict';
 
+    // This is our service, which is an object that represents the user. The
+    // app should be able to just add this to the scope.
     var user = {
-      isSignedIn: false
+      isAuthenticated: false, // Whether the user is authenticated or anonymous.
+      data: {}, // User data coming from the database or similar.
+      meta: {} // Metadata: registration status, tokens, etc.
 ***REMOVED***
-    var registrationHandler;
-    var deferredSignIn = $q.defer();
 
-    if (window.sessionStorage.userMeta) {
-      $log.debug('sessionStorage.userMeta:', window.sessionStorage.userMeta);
-      $log.debug('sessionStorage.userData:', window.sessionStorage.userData);
-      user.isSignedIn = true;
-      try {
-        user.meta = angular.fromJson(window.sessionStorage.userMeta) || {};
-        user.data = angular.fromJson(window.sessionStorage.userData) || {};
-***REMOVED*** catch (e) {
-        $log.error('Failed to parse user data from sessionStorage.');
-        user.isSignedIn = false;
-        user.meta = {};
-        user.dat = {};
-***REMOVED***
-      deferredSignIn.resolve();
-    } else {
-      user.isSignedIn = false;
-      user.data = {};
-      user.meta = {};
+    var registrationHandler; // An optional callback for registering an new user.
+    var statusPromise; // A promise resolving to user's authentication status.
+
+    // Retrieves user's data from the server. This means we need to make an
+    // extra trip to the server, but the benefit is that this method works
+    // across a range of authentication setups and we are not limited by
+    // cookie size.
+    function getUserData(url) {
+      // First get the current user data from the server.
+      return $http.get(url || '/auth/user')
+        .then(function (response) {
+          var newUser = response.data;
+          // Figure out if the user is signed in. If so, update user.data and
+          // user.meta.
+          if (newUser.isAuthenticated) {
+            user.data = newUser.data;
+            user.meta = newUser.meta;
+  ***REMOVED***
+          user.isAuthenticated = newUser.isAuthenticated;
+          return newUser.isAuthenticated;
+***REMOVED***)
+        .then(function (isAuthenticated) {
+          $log.debug('isAuthenticated?', isAuthenticated);
+          // Call the registration handler if the user is new and the handler
+          // is defined.
+          if (isAuthenticated && (!user.meta.isRegistered) &&
+            registrationHandler) {
+            // Using $timeout to give angular a chance to update the view.
+            // $timeout returns a promise for a promise that is returned by
+            // $registrationHandler.
+            return $timeout(registrationHandler, 0)
+              .then(function () {
+                return isAuthenticated;
+          ***REMOVED***
+  ***REMOVED*** else {
+            user.isReady = true;
+            return isAuthenticated;
+  ***REMOVED***
+***REMOVED***)
+        .then(null, $log.error);
     }
 
-    // Initiates the user service. Right now this means we load Mozilla Persona.
-    user.init = function (options) {
-      $log.debug('koastUser.init');
-      options.onSignIn = function (response) {
-        user.data = response.data;
-        user.meta = response.meta;
-        $log.debug('user.data:', user.data);
-        $log.debug('user.meta:', user.meta);
-        window.sessionStorage.userData = angular.toJson(user.data);
-        window.sessionStorage.userMeta = angular.toJson(user.meta);
-        if (user.meta.isNew && registrationHandler) {
-          $log.debug('scheduling the registration handler');
-          $timeout(function() {
-            registrationHandler()
-              .then(deferredSignIn.resolve, $log.error);
-    ***REMOVED*** 0);
-***REMOVED*** else {
-          $log.debug('Resolving deferredSignIn.');
-          deferredSignIn.resolve();
-***REMOVED***
-        user.isSignedIn = true;
-***REMOVED***;
-      options.onSignOut = function () {
-        $log.debug('onSignOut');
-        // Nothing to do here, since we should have already signed out the
-        // user before calling Persona.
-***REMOVED***;
-      koastPersona.init(options);
-      koastPersona.whenReady()
-        .then(function () {
-          user.isReady = true;
-  ***REMOVED*** $log.error);
+    // Initiates the login process.
+    user.initiateOauthAuthentication = function (provider) {
+      koastOauth.initiateAuthentication(provider);
 ***REMOVED***
 
-    // Initiates signIn - just calls persona's function.
-    user.signIn = koastPersona.initiateSignIn;
-
-    // Initiates signOut - just calls persona's function.
-    user.signOut = function () {
-      $timeout(function() {
-        user.data = {};
-        user.meta = {};
-        window.sessionStorage.userData = '{}';
-        window.sessionStorage.userMeta = '{}';
-        user.isSignedIn = false;
+    // Posts a logout request.
+    user.logout = function (nextUrl) {
+      return $http.post('/auth/logout')
+        .then(function (response) {
+          if (response.data !== 'Ok') {
+            throw new Error('Failed to logout.');
+  ***REMOVED*** else {
+            $window.location.replace(nextUrl || '/');
   ***REMOVED***
-      koastPersona.initiateSignOut();
+***REMOVED***)
+        .then(null, function (error) {
+          $log.error(error);
+          throw error;
+    ***REMOVED***
+***REMOVED***
+
+    // Registers the user. 
+    user.register = function (data) {
+      return $http.put('/auth/user', data)
+        .then(function () {
+          return getUserData();
+    ***REMOVED***
+***REMOVED***
+
+    // Checks if a username is available.
+    user.checkUsernameAvailability = function (username) {
+      return $http.get('/auth/usernameAvailable', {
+        params: {
+          username: username
+***REMOVED***
+***REMOVED***)
+        .then(function (result) {
+          return result.data === 'true';
+***REMOVED***)
+        .then(null, $log.error);
 ***REMOVED***
 
     // Attaches a registration handler - afunction that will be called when we
@@ -247,9 +134,18 @@ angular.module('koast-user', [])
       registrationHandler = handler;
 ***REMOVED***
 
-    // Returns a promise that resolves when a user is logged in.
-    user.whenSignedIn = function() {
-      return deferredSignIn.promise;
+    // Returns a promise that resolves to user's login status.
+    user.getStatusPromise = function () {
+      if (!statusPromise) {
+        statusPromise = getUserData();
+***REMOVED***
+      return statusPromise;
+***REMOVED***
+
+    // Initializes the user service.
+    user.init = function (options) {
+      koastOauth.setBaseUrl(options.baseUrl);
+      return user.getStatusPromise();
 ***REMOVED***
 
     return user;
