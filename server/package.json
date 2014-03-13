@@ -36,7 +36,8 @@
     "connect-mongo": "~0.4.0",
     "passport-facebook": "~1.0.3",
     "passport-twitter": "~1.0.2",
-    "passport-google-oauth": "~0.1.5"
+    "passport-google-oauth": "~0.1.5",
+    "passport": "~0.2.0"
   },
   "devDependencies": {
     "mocha": "~1.14.0",
