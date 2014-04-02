@@ -1,0 +1,29 @@
+{
+  "name": "koast",
+  "version": "0.0.0",
+  "description": "This is not our main package.json - this one is just for dev purposes.",
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "gulp-beautify": "~1.0.3",
+    "gulp-jshint": "~1.5.2",
+    "gulp": "~3.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rangle/koast.git"
+  },
+  "author": "Yuri Takhteyev",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/rangle/koast/issues"
+  }
+}

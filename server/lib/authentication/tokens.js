@@ -1,5 +1,7 @@
 /* global require, exports */
 
+'use strict';
+
 var crypto = require('crypto');
 
 var fixedSalt = '0c@b2d:24+fe58cf';

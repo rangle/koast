@@ -1,5 +1,7 @@
 /* global require */
 
+'use strict';
+
 var optimist = require('optimist');
 var _ = require('underscore');
 var fs = require('fs');

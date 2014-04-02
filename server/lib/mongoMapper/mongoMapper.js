@@ -7,7 +7,6 @@
  */
 
 var _ = require('underscore');
-var assert = require('assert');
 var log = require('../log');
 
 var handlerFactories = {};
@@ -159,7 +158,10 @@ handlerFactories.del = function (model, queryDecorator, filter, authorizer) {
 exports.makeMapper = function (dbConnection) {
   var service = {};
   service.queryDecorator = function () {}; // The default is to do nothing.
-  service.filter = function() { return true; } // The default is to allow everything.
+  service.filter = function() {
+    // The default is to allow everything.
+    return true;
+  };
   service.authorizer = function () {}; // The default is to do nothing.
 
   ['get', 'post', 'put', 'del'].forEach(function (method) {

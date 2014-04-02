@@ -15,6 +15,18 @@ function comparePasswords(password1, password2) {
   return deferred.promise;
 }
 
+function accept() {
+  // placeholder
+}
+
+function reject() {
+  // placeholder
+}
+
+function reportError() {
+  // placeholder
+}
+
 function makeHandlers (done) {
   return {
     reject: function (message) {
@@ -56,7 +68,7 @@ exports.makeAuthenticator = function(userModel) {
 ***REMOVED***)
       .then(function(isMatch) {
         if (isMatch) {
-          accept(user);
+          accept(username);
 ***REMOVED*** else {
           reject();
 ***REMOVED***

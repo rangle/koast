@@ -1,5 +1,7 @@
 /* global exports */
 
+'use strict';
+
 var https = require('https');
 var querystring = require('querystring');
 var log = require('../log');
@@ -43,7 +45,7 @@ exports.makeAuthenticator = function (userLookupFunction) {
                   .then(function(result) {
                     if (result.valid) {
                       log.debug('user:', result.user);
-                      res.send(200, result.user);                      
+                      res.send(200, result.user);
         ***REMOVED*** else {
                       res.send(401, 'Access denied.');
         ***REMOVED***
@@ -68,5 +70,5 @@ exports.makeAuthenticator = function (userLookupFunction) {
       ***REMOVED***
   ***REMOVED***
     log.debug('verifying assertion!');
-  }
-}
+  };
+};
