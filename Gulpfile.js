@@ -41,7 +41,7 @@ gulp.task('lint', function() {
 gulp.task('beautify', function() {
   gulp.src(paths.allScripts)
     .pipe(beautify(options.beautify))
-    .pipe(gulp.dest('./public/'))
+    .pipe(gulp.dest('./public'))
 ***REMOVED***
 
 gulp.task('default', ['lint']);
