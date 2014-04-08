@@ -22,8 +22,8 @@ mapper.authorizer = function(result, req, res) {
 // The actual routes.
 exports.routes = [
   ['get', 'robots', mapper.get('robots', [])],
-  ['get', 'robots/:robotNumber', mapper.get('robots'), ['robotNumber']],
-  ['del', 'robots/:robotNumber', mapper.del('robots'), ['robotNumber']],
-  ['put', 'robots/:robotNumber', mapper.put('robots'), ['robotNumber']],
+  ['get', 'robots/:robotNumber', mapper.get('robots', [], ['owner'])],
+  ['del', 'robots/:robotNumber', mapper.del('robots')],
+  ['put', 'robots/:robotNumber', mapper.put('robots')],
   ['post', 'robots', mapper.post('robots')]
 ];
