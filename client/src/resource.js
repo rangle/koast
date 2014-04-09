@@ -91,7 +91,7 @@ angular.module('koast-resource', ['koast-user'])
       if (!params) {
         return '';
 ***REMOVED*** else {
-        return template.replace(/:([_-a-zA-Z]*)/g, function (_, paramName) {
+        return template.replace(/:([-_a-zA-Z]*)/g, function (_, paramName) {
           var param = params[paramName];
           if (!param) {
             throw new Error('Missing parameter: ' + paramName);
