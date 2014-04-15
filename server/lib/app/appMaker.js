@@ -9,11 +9,26 @@ var Q = require('q');
 var log = require('../log');
 var authentication = require('../authentication/authentication');
 
+***REMOVED***
+
 // Sets up an app based on a configuration file.
-exports.makeExpressApp = function (appConfig) {
+exports.makeExpressApp = function () {
+
+  var appConfig = config.getConfig('app');
+  var corsConfig = config.getConfig('cors');
 
   var app = express();
   var indexHtml;
+
+  if (corsConfig) {
+    app.all('*', function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', corsConfig.origin);
+      res.header('Access-Control-Allow-Headers', corsConfig.headers);
+      res.header('Access-Control-Allow-Methods', corsConfig.methods);
+      res.header('Access-Control-Allow-Credentials', corsConfig.credentials);
+      next();
+***REMOVED***
+  }
 
   if (appConfig.indexHtml) {
     indexHtml = fs.readFileSync(appConfig.indexHtml).toString();
