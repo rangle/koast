@@ -21,13 +21,14 @@ exports.makeExpressApp = function () {
   var indexHtml;
 
   if (corsConfig) {
-    app.all('*', function(req, res, next) {
+    var allowCrossDomain = function(req, res, next) {
       res.header('Access-Control-Allow-Origin', corsConfig.origin);
       res.header('Access-Control-Allow-Headers', corsConfig.headers);
       res.header('Access-Control-Allow-Methods', corsConfig.methods);
       res.header('Access-Control-Allow-Credentials', corsConfig.credentials);
       next();
 ***REMOVED***
+    app.use(allowCrossDomain);
   }
 
   if (appConfig.indexHtml) {
