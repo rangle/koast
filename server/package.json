@@ -1,6 +1,6 @@
 {
   "name": "koast",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
@@ -37,7 +37,9 @@
     "passport-facebook": "~1.0.3",
     "passport-twitter": "~1.0.2",
     "passport-google-oauth": "~0.1.5",
-    "passport": "~0.2.0"
+    "passport": "~0.2.0",
+    "bcrypt": "~0.7.7",
+    "passport-local": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "~1.14.0",

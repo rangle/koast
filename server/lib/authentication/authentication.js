@@ -11,6 +11,7 @@ var MongoStore = connectMongo(express);
 ***REMOVED***
 var log = require('../log');
 var oauth = require('./oauth');
+var password = require('./password');
 var util = require('../util/util');
 var dbUtils = require('../database/dbUtils');
 
@@ -49,9 +50,11 @@ exports.addSessionHandling = function (app) {
  * @param {Object} app             An express app.
  */
 exports.addAuthenticationRoutes = function (app) {
+  var authConfig = config.getConfig('authentication');
   var oauthConfig = config.getConfig('oauth');
   var connection = dbUtils.getConnectionNow();
   var providerAccounts = connection.model('userProviderAccounts');
+  var users = connection.model('users');
 
   // GET /auth/user - returns info about the logged in user, in an envelope.
   app.get('/auth/user', function (req, res) {
@@ -60,7 +63,7 @@ exports.addAuthenticationRoutes = function (app) {
 
   // PUT /auth/user - update the current user's record. This is meant to be
   // used for the purpose of registration, etc. For now we only allow this
-  // method to set username.
+  // method to set username. This is currently working only for OAuth users.
   app.put('/auth/user', function (req, res) {
     var query;
     var update;
@@ -131,8 +134,19 @@ exports.addAuthenticationRoutes = function (app) {
       .then(null, util.makeErrorResponder(res));
 ***REMOVED***
 
-  // Finally, use oauth.init to setup routes for all configured providers.
-  _.keys(oauthConfig).forEach(function (provider) {
-    oauth.init(app, provider, oauthConfig[provider], providerAccounts);
+  // For now configure this regardless of authentication config, for backwards
+  // compatibility.
+  if (oauthConfig) {
+    log.info('Adding OAuth routes');
+    // Finally, use oauth.init to setup routes for all configured providers.
+    _.keys(oauthConfig).forEach(function (provider) {
+      oauth.init(app, provider, oauthConfig[provider], providerAccounts);
 ***REMOVED***
-};
+  }
+
+  // Configure password authentication if necessary.
+  console.log('Authentication strategy:', authConfig.strategy);
+  if (authConfig.strategy === 'password') {
+    password.setup(app, users, {***REMOVED***
+  }
+}
