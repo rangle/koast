@@ -9,7 +9,7 @@ var log = koast.getLogger();
 koast.createDatabaseConnections()
   // Optionally insert extra steps here before setting up the app.
   .then(function() {
-    var app = koast.makeExpressApp(appConfig);
+    var app = koast.makeExpressApp();
     app.listen(appConfig.portNumber);
     log.info('Listening on ', appConfig.portNumber);
   })
