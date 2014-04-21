@@ -27,7 +27,10 @@ function getFullConfigFilePath(subpath) {
 }
 
 function readJsonFromFile(subpath) {
-  return JSON.parse(fs.readFileSync(getFullConfigFilePath(subpath)));
+  var fullPath = getFullConfigFilePath(subpath);
+  if (fs.existsSync(fullPath)) {
+    return JSON.parse(fs.readFileSync(fullPath));
+  }
 }
 
 exports.setEnvironment = function (newEnvironment) {
