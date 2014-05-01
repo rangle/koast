@@ -52,8 +52,10 @@ function makeVerifyFunction (users, config) {
 ***REMOVED*** else {
           expect(user.username).to.equal(username);
           log.debug('passport.localStrategy: found user %s.', username);
-          //return comparePasswords(password, user.password);
-          done(null, user); // accept
+          return comparePasswords(password, user.password)
+            .then(function(accept) {
+              done(null, accept && user); // accept
+        ***REMOVED***
 ***REMOVED***
 ***REMOVED***)
       .then(null, done); // report error
