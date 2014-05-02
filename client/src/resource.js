@@ -6,13 +6,11 @@ angular.module('koast-resource', ['koast-user'])
   function(user) {
     var service = {};
     service.addAuthHeaders = function (headers) {
-      console.log('Token:', user.meta.authToken);
       if (user.isSignedIn) {
         headers['koast-auth-token'] = user.meta.authToken;
         headers['koast-auth-token-timestamp'] = user.meta.timestamp;
         headers['koast-user'] = angular.toJson(user.data);
 ***REMOVED***
-      console.log('Headers:', headers);
 ***REMOVED***
     return service;
   }])
