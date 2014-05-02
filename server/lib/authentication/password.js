@@ -45,6 +45,11 @@ function makeVerifyFunction (users, config) {
     var handlers = makeHandlers(done);
     users.findOne(userQuery).exec()
       .then(function(user) {
+        if (!user){
+          done(null, false); // reject
+          return;
+***REMOVED***
+
         user = user.toObject();
         log.debug('found:', user);
         if (!user) {
