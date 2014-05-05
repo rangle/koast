@@ -214,7 +214,7 @@ angular.module('koast-resource', ['koast-user'])
     service.createResource = function (endpointHandle, body) {
       return post(endpointHandle, body)
         .then(function(result) {
-          console.log(result)
+          return result;
   ***REMOVED*** $log.error);
 ***REMOVED***
 
