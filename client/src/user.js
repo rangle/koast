@@ -9,10 +9,11 @@ angular.module('koast-user', [])
 
     var service = {};
     var baseUrl = 'http://127.0.0.1:3000';
+    var isMobileApp = false;
 
     // Makes a URL for the OAuth provider.
     function makeAuthUrl(provider, nextUrl) {
-      return baseUrl + 'auth/' + provider + '?next=' +
+      return service.getBaseUrl() + 'auth/' + provider + '?next=' +
         encodeURIComponent(nextUrl);
     }
 
@@ -25,6 +26,21 @@ angular.module('koast-user', [])
     // Sets a new base URL
     service.setBaseUrl = function (newBaseUrl) {
       baseUrl = newBaseUrl;
+***REMOVED***
+
+    // Mobile apps (phone gap) require the base url, since it's likely
+    // that the server is hosted on a different domain (relative path won't
+    // work)
+    service.getBaseUrl = function () {
+      if (isMobileApp){
+        return baseUrl;
+***REMOVED*** else {
+        return '';
+***REMOVED***
+***REMOVED***
+
+    service.setIsMobileApp = function (val) {
+      isMobileApp = val;
 ***REMOVED***
 
     return service;
@@ -47,42 +63,58 @@ angular.module('koast-user', [])
     var registrationHandler; // An optional callback for registering an new user.
     var statusPromise; // A promise resolving to user's authentication status.
 
+    function setUser(response) {
+      var newUser = response.data;
+      // Figure out if the user is signed in. If so, update user.data and
+      // user.meta.
+      if (newUser.isAuthenticated) {
+        user.data = newUser.data;
+        user.meta = newUser.meta;
+***REMOVED***
+      user.isAuthenticated = newUser.isAuthenticated;
+      return newUser.isAuthenticated;
+    }
+
+    function setUserForLocal(response) {
+      if (response.data && response.data.username) {
+        user.data = response.data;
+        user.isAuthenticated = true;
+        user.meta = response.meta;
+***REMOVED*** else {
+        user.data = {};
+        user.isAuthenticated = false;
+***REMOVED***
+      return user.isAuthenticated;
+    }
+
+    function callRegistrationHandler(isAuthenticated) {
+      $log.debug('isAuthenticated?', isAuthenticated);
+      // Call the registration handler if the user is new and the handler
+      // is defined.
+      if (isAuthenticated && (!user.meta.isRegistered) &&
+        registrationHandler) {
+        // Using $timeout to give angular a chance to update the view.
+        // $timeout returns a promise for a promise that is returned by
+        // $registrationHandler.
+        return $timeout(registrationHandler, 0)
+          .then(function () {
+            return isAuthenticated;
+      ***REMOVED***
+***REMOVED*** else {
+        user.isReady = true;
+        return isAuthenticated;
+***REMOVED***
+    }
+
     // Retrieves user's data from the server. This means we need to make an
     // extra trip to the server, but the benefit is that this method works
     // across a range of authentication setups and we are not limited by
     // cookie size.
     function getUserData(url) {
       // First get the current user data from the server.
-      return $http.get(url || '/auth/user')
-        .then(function (response) {
-          var newUser = response.data;
-          // Figure out if the user is signed in. If so, update user.data and
-          // user.meta.
-          if (newUser.isAuthenticated) {
-            user.data = newUser.data;
-            user.meta = newUser.meta;
-  ***REMOVED***
-          user.isAuthenticated = newUser.isAuthenticated;
-          return newUser.isAuthenticated;
-***REMOVED***)
-        .then(function (isAuthenticated) {
-          $log.debug('isAuthenticated?', isAuthenticated);
-          // Call the registration handler if the user is new and the handler
-          // is defined.
-          if (isAuthenticated && (!user.meta.isRegistered) &&
-            registrationHandler) {
-            // Using $timeout to give angular a chance to update the view.
-            // $timeout returns a promise for a promise that is returned by
-            // $registrationHandler.
-            return $timeout(registrationHandler, 0)
-              .then(function () {
-                return isAuthenticated;
-          ***REMOVED***
-  ***REMOVED*** else {
-            user.isReady = true;
-            return isAuthenticated;
-  ***REMOVED***
-***REMOVED***)
+      return $http.get(url || koastOauth.getBaseUrl() + '/auth/user')
+        .then(setUser)
+        .then(callRegistrationHandler)
         .then(null, $log.error);
     }
 
@@ -90,10 +122,10 @@ angular.module('koast-user', [])
     user.initiateOauthAuthentication = function (provider) {
       koastOauth.initiateAuthentication(provider);
 ***REMOVED***
-
+    
     // Posts a logout request.
     user.logout = function (nextUrl) {
-      return $http.post('/auth/logout')
+      return $http.post(koastOauth.getBaseUrl() + '/auth/logout')
         .then(function (response) {
           if (response.data !== 'Ok') {
             throw new Error('Failed to logout.');
@@ -107,17 +139,43 @@ angular.module('koast-user', [])
     ***REMOVED***
 ***REMOVED***
 
-    // Registers the user. 
+    // user logs in with local strategy
+    user.loginLocal = function (user) {
+      $log.debug('Login:', user.username, user.password);
+      var config = {
+        params: {
+          username: user.username,
+          password: user.password
+***REMOVED***
+***REMOVED***;
+      return $http.post(koastOauth.getBaseUrl() + '/auth/login', {}, config)
+        .then(setUserForLocal, $log.error);
+        // TODO this is wrong for error case.
+        //.then(callRegistrationHandler)
+        //.then(null, $log.error);
+        
+***REMOVED***
+
+
+    // Registers the user (social login)
     user.register = function (data) {
-      return $http.put('/auth/user', data)
+      return $http.put(koastOauth.getBaseUrl() + '/auth/user', data)
         .then(function () {
           return getUserData();
     ***REMOVED***
 ***REMOVED***
 
+    // Registers the user (local)
+    user.registerLocal = function (userData) {
+      return $http.post(koastOauth.getBaseUrl() + '/auth/user', userData)
+        .then(function(res){
+          return user.loginLocal(userData);
+  ***REMOVED*** $log.error);
+***REMOVED***
+
     // Checks if a username is available.
     user.checkUsernameAvailability = function (username) {
-      return $http.get('/auth/usernameAvailable', {
+      return $http.get(koastOauth.getBaseUrl() + '/auth/usernameAvailable', {
         params: {
           username: username
 ***REMOVED***
@@ -145,6 +203,7 @@ angular.module('koast-user', [])
     // Initializes the user service.
     user.init = function (options) {
       koastOauth.setBaseUrl(options.baseUrl);
+      koastOauth.setIsMobileApp(options.isMobileApp);
       return user.getStatusPromise();
 ***REMOVED***
 

@@ -122,6 +122,7 @@ exports.addAuthenticationRoutes = function (app) {
 
     if (!req.body.username || !req.body.password || !req.body.displayName || !req.body.email) {
       res.send(401, 'You must provide username, email, and password');
+      return;
     }
 
 
@@ -156,8 +157,8 @@ exports.addAuthenticationRoutes = function (app) {
             return res.send(500, 'Internal error');
   ***REMOVED***
           if (user) {
-            console.log(user.username + ' was saved to the database');
-            res.send(200, null);
+            log.info(user.username + ' was saved to the database');
+            res.send(200, user);
   ***REMOVED***
     ***REMOVED***
 
