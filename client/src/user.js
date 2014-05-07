@@ -170,7 +170,9 @@ angular.module('koast-user', [])
       return $http.post(koastOauth.getBaseUrl() + '/auth/user', userData)
         .then(function(res){
           return user.loginLocal(userData);
-  ***REMOVED*** $log.error);
+  ***REMOVED*** function(res) {
+          return $q.reject(res);
+    ***REMOVED***
 ***REMOVED***
 
     // Checks if a username is available.
