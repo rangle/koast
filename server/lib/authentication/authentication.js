@@ -149,4 +149,4 @@ exports.addAuthenticationRoutes = function (app) {
   if (authConfig.strategy === 'password') {
     password.setup(app, users, {***REMOVED***
   }
-}
+};

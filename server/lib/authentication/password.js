@@ -7,7 +7,7 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var Q = require('q');
 ***REMOVED***
-var LocalStrategy = require('passport-local').Strategy
+var LocalStrategy = require('passport-local').Strategy;
 var log = require('../log');
 
 function comparePasswords(password1, password2) {
@@ -60,7 +60,7 @@ function makeVerifyFunction (users, config) {
 ***REMOVED***)
       .then(null, done); // report error
   };
-};
+}
 
 exports.setup = function(app, users, config) {
   // Setup the authentication strategy
@@ -72,7 +72,7 @@ exports.setup = function(app, users, config) {
     passport.authenticate('local', function(err, user, info) {
       if (err) {
         console.log(err);
-        return next(err)
+        return next(err);
 ***REMOVED***
       if (!user) {
         req.logout();
@@ -87,4 +87,4 @@ exports.setup = function(app, users, config) {
 ***REMOVED***
     })(req, res, next);
 ***REMOVED***
-}
+};

@@ -1,4 +1,4 @@
-console.log('...');
+'use strict';
 
 var koast = require('koast');
 koast.setEnvironment('local');

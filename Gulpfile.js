@@ -1,31 +1,42 @@
 var gulp = require('gulp');
 var rg = require('rangle-gulp');
 
+var karmaFiles = [
+  // 3rd party
+  'client/bower_components/angular/angular.min.js',
+  'client/bower_components/angular-mocks/angular-mocks.js',
+  'client/bower_components/sinon-chai/lib/sinon-chai.js',
+  // Our code
+  'client/src/**/*.js'
+];
+
 gulp.task('karma', rg.karma({
-  files: [
-    // 3rd party
-    'client/bower_components/angular/angular.min.js',
-    'client/bower_components/angular-mocks/angular-mocks.js',
-    'client/bower_components/sinon-chai/lib/sinon-chai.js',
-    // Our code
-    'client/src/**/*.js'
-  ]
+  files: karmaFiles
 }));
 
 gulp.task('karma-watch', rg.karmaWatch({
-  // files: specify which folders
-  // karmaConf: specify which karma config file
+  files: karmaFiles
 }));
 
 gulp.task('lint', rg.jshint({
-  // files: specify which files
+  files: [
+    'client/src/**/*.js',
+    'server/lib/**/*.js',
+    'server/index.js',
+    'examples/basic-express/client/app/app.js',
+    'examples/basic-express/client/app/**/*.js',
+    'examples/basic-express/server/app.js',
+    'examples/basic-express/server/**/*.js'
+  ]
 }));
 
 gulp.task('beautify', rg.beautify({
-  // files: specify which files
+  files: []
 }));
 
 gulp.task('dev', rg.nodemon({
+  // workingDirectory: 'examples/basic-express/',
+  script: 'examples/basic-express/server/app.js',
   onChange: ['lint'] // or ['lint', 'karma']
 }));
 
