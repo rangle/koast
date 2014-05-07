@@ -17,5 +17,10 @@
     "tmp",
     "server",
     "examples"
-  ]
+  ],
+  "dependencies": {
+    "angular": "~1.2.16",
+    "angular-mocks": "~1.2.16",
+    "sinon-chai": "~2.5.0"
+  }
 }

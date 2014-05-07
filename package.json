@@ -2,7 +2,7 @@
   "name": "koast",
   "version": "0.0.0",
   "description": "This is not our main package.json - this one is just for dev purposes.",
-  "main": "Gruntfile.js",
+  "main": "",
   "directories": {
     "doc": "docs",
     "example": "examples"
@@ -10,8 +10,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "gulp-beautify": "~1.0.3",
-    "gulp-jshint": "~1.5.2",
+    "rangle-gulp": "~0.0.2",
     "gulp": "~3.6.0"
   },
   "scripts": {
