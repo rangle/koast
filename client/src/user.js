@@ -48,8 +48,8 @@ angular.module('koast-user', [])
 ])
 
 // A service that represents the logged in user.
-.factory('_koastUser', ['_koastOauth', '$log', '$timeout', '$http', '$window',
-  function (koastOauth, $log, $timeout, $http, $window) {
+.factory('_koastUser', ['_koastOauth', '$log', '$timeout', '$http', '$window', '$q',
+  function (koastOauth, $log, $timeout, $http, $window, $q) {
     'use strict';
 
     // This is our service, which is an object that represents the user. The
@@ -140,7 +140,7 @@ angular.module('koast-user', [])
 ***REMOVED***
 
     // user logs in with local strategy
-    user.loginLocal = function (user) {
+    user.loginLocal = function(user) {
       $log.debug('Login:', user.username, user.password);
       var config = {
         params: {
@@ -149,13 +149,13 @@ angular.module('koast-user', [])
 ***REMOVED***
 ***REMOVED***;
       return $http.post(koastOauth.getBaseUrl() + '/auth/login', {}, config)
-        .then(setUserForLocal, $log.error);
-        // TODO this is wrong for error case.
-        //.then(callRegistrationHandler)
-        //.then(null, $log.error);
-        
-***REMOVED***
+        .then(setUserForLocal, function(res) {
+          return $q.reject(res);
+    ***REMOVED***
+      //.then(callRegistrationHandler)
+      //.then(null, $log.error);
 
+***REMOVED***
 
     // Registers the user (social login)
     user.register = function (data) {
