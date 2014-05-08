@@ -9,7 +9,7 @@ var _ = require('underscore');
 var dbUtils = require('../database/db-utils');
 var mongoMapper = require('../mongo-mapper/mongo-mapper');
 
-describe('Testing mongoMapper.', function (done) {
+describe('Testing mongoMapper.', function () {
   var mapper;
   var connection;
   var robotGetter;
