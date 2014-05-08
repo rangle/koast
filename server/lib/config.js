@@ -34,7 +34,7 @@ function readJsonFromFile(subpath) {
 }
 
 exports.setEnvironment = function (newEnvironment, options) {
-  var options = options || {};
+  options = options || {};
   if (environment && !options.force) {
     throw new Error('Cannot change the environment once it was set.');
   } else {
@@ -44,7 +44,7 @@ exports.setEnvironment = function (newEnvironment, options) {
 };
 
 exports.setConfigDirectory = function (newConfigDirectory, options) {
-  var options = options || {};
+  options = options || {};
   if (configDirectory && !options.force) {
     throw new Error('Cannot change the config directory once it was set.');
   } else {

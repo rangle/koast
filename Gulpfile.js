@@ -11,7 +11,7 @@ var karmaFiles = [
   'client/src/**/*.js'
 ];
 
-rg.setLogLevel('debug');
+rg.setLogLevel('info');
 
 gulp.task('karma', rg.karma({
   files: karmaFiles,
@@ -41,6 +41,12 @@ gulp.task('beautify', rg.beautify({
   files: []
 }));
 
+gulp.task('concat', rg.concatAndUglify({
+  files: 'client/src/**/*.js',
+  name: 'koast',
+  dist: 'client/dist/'
+}));
+
 gulp.task('dev', rg.nodemon({
   // workingDirectory: 'examples/basic-express/',
   script: 'examples/basic-express/server/app.js',
@@ -49,4 +55,4 @@ gulp.task('dev', rg.nodemon({
 
 gulp.task('test', ['karma', 'mocha']);
 
-gulp.task('default', ['lint']);
+gulp.task('default', ['lint', 'concat', 'mocha', 'karma']);

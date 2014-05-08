@@ -1,3 +1,4 @@
+/* jshint expr:true */
 /* global require, exports */
 
 'use strict';
@@ -231,4 +232,4 @@ exports.getConnectionPromise = function (handle) {
 exports.reset = function () {
   connections = {};
   connectionPromises = {};
-}
+};

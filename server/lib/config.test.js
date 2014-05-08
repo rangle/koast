@@ -1,4 +1,7 @@
+/* jshint expr:true */
+/* global require, describe, it, before, after */
 'use strict';
+
 ***REMOVED***
 var config = require('./config');
 

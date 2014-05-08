@@ -4,6 +4,7 @@ angular.module('koast-resource', ['koast-user'])
 
 .factory('_KoastServerHelper', ['_koastUser',
   function(user) {
+    'use strict';
     var service = {};
     service.addAuthHeaders = function (headers) {
       if (user.isSignedIn) {
@@ -91,7 +92,8 @@ angular.module('koast-resource', ['koast-user'])
 ***REMOVED*** else {
         return template.replace(/:([-_a-zA-Z]*)/g, function (_, paramName) {
           var param = params[paramName];
-          if (!param && !param === 0) {
+          var paramIsDefined = param || (param===0); // Accept 0 as "defined".
+          if (!paramIsDefined) {
             throw new Error('Missing parameter: ' + paramName);
   ***REMOVED***
           return params[paramName];

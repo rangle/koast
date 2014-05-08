@@ -1,4 +1,4 @@
-/* global require, describe, it */
+/* global require, describe, it, before, after */
 /* jshint expr:true */
 
 'use strict';
