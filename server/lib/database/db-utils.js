@@ -81,7 +81,7 @@ function createConnection(handle, dbConfig, schemas) {
     }
 ***REMOVED***
 
-  // Let's go throw the schemas for each collection and generate a setup task
+  // Let's go through the schemas for each collection and generate a setup task
   // for each. We'll need to run those tasks asynchronously because
   // ensureIndexes is asynchronous.
   var schemaTasks = _.map(schemas, function (schema) {
@@ -222,3 +222,13 @@ exports.getConnectionPromise = function (handle) {
     throw 'No such connection: ' + handle;
   }
 };
+
+/**
+ * Wipe out the state. This should probably only used for testing.
+ *
+ * @return {undefined}             Nothing is returned.
+ */
+exports.reset = function () {
+  connections = {};
+  connectionPromises = {};
+}

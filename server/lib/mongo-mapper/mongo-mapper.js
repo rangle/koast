@@ -67,6 +67,13 @@ function makeResultHandler(request, response, filter, authorizer, options) {
 ***REMOVED***
 
       response.setHeader('Content-Type', 'text/plain');
+
+      if (!_.isObject(results)) {
+        // Do not wrap non-object results.
+        response.send(200, results);
+        return;
+***REMOVED***
+
       if (!_.isArray(results)) {
         results = [results];
 ***REMOVED***

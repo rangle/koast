@@ -10,8 +10,9 @@
   "dependencies": {
   },
   "devDependencies": {
-    "rangle-gulp": "~0.0.2",
-    "gulp": "~3.6.0"
+    "gulp": "~3.6.0",
+    "mockery": "^1.4.0",
+    "rangle-gulp": "~0.0.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

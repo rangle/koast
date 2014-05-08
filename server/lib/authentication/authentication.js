@@ -13,7 +13,7 @@ var log = require('../log');
 var oauth = require('./oauth');
 var password = require('./password');
 var util = require('../util/util');
-var dbUtils = require('../database/dbUtils');
+var dbUtils = require('../database/db-utils');
 
 /**
  * Sets up session handling for the app.

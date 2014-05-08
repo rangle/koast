@@ -2,11 +2,11 @@
 
 'use strict';
 
-var appMaker = require('./lib/app/appMaker');
+var appMaker = require('./lib/app/app-maker');
 var config = require('./lib/config');
-var dbUtils = require('./lib/database/dbUtils');
+var dbUtils = require('./lib/database/db-utils');
 var logger = require('./lib/log');
-var mongoMapper = require('./lib/mongoMapper/mongoMapper');
+var mongoMapper = require('./lib/mongo-mapper/mongo-mapper');
 var s3upload = require('./lib/aws/s3upload.js');
 exports.makeExpressApp = appMaker.makeExpressApp;
 exports.setEnvironment = config.setEnvironment;

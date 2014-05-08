@@ -33,20 +33,24 @@ function readJsonFromFile(subpath) {
   }
 }
 
-exports.setEnvironment = function (newEnvironment) {
-  environment = newEnvironment;
+exports.setEnvironment = function (newEnvironment, options) {
+  var options = options || {};
+  if (environment && !options.force) {
+    throw new Error('Cannot change the environment once it was set.');
+  } else {
+    environment = newEnvironment;
+  }
   cachedConfigs = {};
 };
 
-exports.setConfigDirectory = function (newConfigDirectory) {
-  configDirectory = newConfigDirectory;
+exports.setConfigDirectory = function (newConfigDirectory, options) {
+  var options = options || {};
+  if (configDirectory && !options.force) {
+    throw new Error('Cannot change the config directory once it was set.');
+  } else {
+    configDirectory = newConfigDirectory;
+  }
 };
-
-// function makeJsonLoader(path) {
-//   return function () {
-//     return readJsonFromFile(path);
-//   };
-// }
 
 exports.getConfig = function (key) {
   cachedConfigs[key] = cachedConfigs[key] || readJsonFromFile(key + '.json');

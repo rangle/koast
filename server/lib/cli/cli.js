@@ -7,7 +7,7 @@ var _ = require('underscore');
 var fs = require('fs');
 
 ***REMOVED***
-var dbUtils = require('../database/dbUtils');
+var dbUtils = require('../database/db-utils');
 
 var usage = 'Usage: $0 --env [env] <command>';
 
@@ -74,7 +74,6 @@ function exitOnError(error) {
 
 handlers.load = ['Loads data into the database.',
   function () {
-    // var mongoLoader = require('./mongo/mongoLoader');
     getModel()
       .then(function (model) {
         var data;
@@ -98,7 +97,6 @@ handlers.load = ['Loads data into the database.',
 
 handlers.drop = ['Drops all data from a mongo collection.',
   function () {
-    // var mongoLoader = require('./mongo/mongoLoader');
     getModel()
       .then(function (model) {
         model.remove({}, function (error, result) {
@@ -119,7 +117,6 @@ handlers.drop = ['Drops all data from a mongo collection.',
 
 handlers.dump = ['Dumps all data from a mongo collection to stdio.',
   function () {
-    // var mongoLoader = require('./mongo/mongoLoader');
     getModel()
       .then(function (model) {
         model.find({}, function (error, result) {

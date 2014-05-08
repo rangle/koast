@@ -10,6 +10,9 @@ var log = require('../log');
 // Adapted https://github.com/kamicane/require-relative/.
 exports.requireRelative = function (requestedPath) {
   var rootPath = process.cwd();
+  if (requestedPath[0] !== '.') {
+    requestedPath = './' + requestedPath;
+  }
   var rootName = path.join(rootPath, '@root');
   var root = new Module(rootName);
   root.filename = rootName;

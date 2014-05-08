@@ -4,11 +4,9 @@
 'use strict';
 ***REMOVED***
 var Q = require('q');
-var config = require('../lib/config');
-var dbUtils = require('../lib/database/dbUtils');
 
-config.setConfigDirectory('tests/config/');
-config.setEnvironment('test');
+***REMOVED***
+var dbUtils = require('./db-utils');
 
 var schemas = [{
   name: 'robots',
@@ -67,6 +65,16 @@ describe('Testing connection.', function (done) {
   var connectionPromise;
   var connection;
 
+***REMOVED***
+    config.setConfigDirectory('server/test-data/config/', {force: true***REMOVED***
+    config.setEnvironment('test', {force: true***REMOVED***
+    dbUtils.reset();
+***REMOVED***
+
+  after(function() {
+    return dbUtils.closeAllConnectionsNow();
+***REMOVED***
+
   it('Create configured connections', function (done) {
     connectionPromise = dbUtils.createConfiguredConnections();
     expect(Q.isPromise(connectionPromise)).to.be.true;
@@ -118,7 +126,6 @@ describe('Testing connection.', function (done) {
     var promise = dbUtils.getConnectionNow('_');
     testConnection(promise, 'koast3');
 ***REMOVED***
-
   it('Remove old robots', function (done) {
     connection = dbUtils.getConnectionNow();
     connection.model('robots').remove({}, function (error, result) {
