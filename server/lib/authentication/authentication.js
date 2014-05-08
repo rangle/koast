@@ -148,10 +148,10 @@ exports.addAuthenticationRoutes = function (app) {
         user.email = req.body.email;
 
         user.save(function (err, user) {
-
+          // code 11000 is a mongoose code duplicate key error
           if (err && err.code === 11000) {
             log.error('Could not save user, is username and email unique? ' + err.message);
-            return res.send(400, 'Username already exists.');
+            return res.send(422, 'Username already exists.');
   ***REMOVED*** else if (err){
             log.error(err.message);
             return res.send(500, 'Internal error');
