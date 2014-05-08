@@ -136,7 +136,7 @@ exports.addAuthenticationRoutes = function (app) {
       // hash the password using our new salt
       bcrypt.hash(req.body.password, salt, function (err, hash) {
         if (err) {
-          log.error('Could not hash password')
+          log.error('Could not hash password');
           return res.send(500, 'Internal error');
 ***REMOVED***
 
@@ -151,9 +151,9 @@ exports.addAuthenticationRoutes = function (app) {
 
           if (err && err.code === 11000) {
             log.error('Could not save user, is username and email unique? ' + err.message);
-            return res.send(400, 'Username and email must be unique');
+            return res.send(400, 'Username already exists.');
   ***REMOVED*** else if (err){
-            log.error(err.message)
+            log.error(err.message);
             return res.send(500, 'Internal error');
   ***REMOVED***
           if (user) {
@@ -180,7 +180,9 @@ exports.addAuthenticationRoutes = function (app) {
     var query = {
       username: req.query.username
 ***REMOVED***
-    providerAccounts.find(query).exec()
+
+    var userCollection = authConfig.strategy === 'password' ? users : providerAccounts;
+    userCollection.find(query).exec()
       .then(function (matchingUsers) {
         res.send(200, matchingUsers.length === 0);
 ***REMOVED***)
