@@ -40,11 +40,13 @@
     "passport": "~0.2.0",
     "bcrypt": "~0.7.7",
     "passport-local": "~1.0.0",
-    "nodemailer": "~0.6.3"
+    "nodemailer": "^0.6.3"
   },
   "devDependencies": {
     "gulp": "~3.6.0",
     "mockery": "^1.4.0",
-    "rangle-gulp": "~0.0.5"
+    "rangle-gulp": "~0.0.5",
+    "sinon": "^1.9.1",
+    "sinon-chai": "^2.5.0"
   }
 }
