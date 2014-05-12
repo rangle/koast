@@ -8,6 +8,7 @@ var dbUtils = require('./lib/database/db-utils');
 var logger = require('./lib/log');
 var mongoMapper = require('./lib/mongo-mapper/mongo-mapper');
 var s3upload = require('./lib/aws/s3upload.js');
+var mailer = require('./lib/mailer');
 exports.makeExpressApp = appMaker.makeExpressApp;
 exports.setEnvironment = config.setEnvironment;
 exports.setConfigDirectory = config.setConfigDirectory;
@@ -16,6 +17,8 @@ exports.createDatabaseConnections = dbUtils.createConfiguredConnections;
 exports.getDatabaseConnectionPromise = dbUtils.getConnectionPromise;
 exports.getDatabaseConnectionNow = dbUtils.getConnectionNow;
 exports.getConnectionHandles = dbUtils.getConnectionHandles;
+
+exports.makeMailer = mailer.mailerMaker;
 
 exports.makeMongoMapper = mongoMapper.makeMapper;
 exports.makeS3FileUploader = s3upload.makeS3FileUploader;
