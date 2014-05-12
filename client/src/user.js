@@ -16,7 +16,7 @@ angular.module('koast-user', [])
 
     // Makes a URL for the OAuth provider.
     function makeAuthUrl(provider, nextUrl) {
-      return baseUrl + 'auth/' + provider + '?next=' +
+      return baseUrl + '/auth/' + provider + '?next=' +
         encodeURIComponent(nextUrl);
     }
 
