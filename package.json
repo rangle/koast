@@ -1,29 +1,49 @@
 {
   "name": "koast",
-  "version": "0.0.0",
-  "description": "This is not our main package.json - this one is just for dev purposes.",
-  "main": "",
-  "directories": {
-    "doc": "docs",
-    "example": "examples"
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
-    "gulp": "~3.6.0",
-    "mockery": "^1.4.0",
-    "rangle-gulp": "~0.0.5"
+  "version": "0.1.8",
+  "description": "A Thin Server with an Attitude",
+  "contributors": [
+    {
+      "name": "Yuri Takhteyev",
+      "email": "yuri@yto.io"
+    }
+  ],
+  "main": "server/index.js",
+  "bin": {
+    "koast": "./server/bin/koast"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/rangle/koast.git"
+    "url": "https://github.com/rangle/koast"
   },
-  "author": "Yuri Takhteyev",
-  "license": "BSD-2-Clause",
-  "bugs": {
-    "url": "https://github.com/rangle/koast/issues"
+  "author": "Rangle.io",
+  "license": "MIT",
+  "dependencies": {
+    "underscore": "~1.5.2",
+    "q": "~1.0.0",
+    "express": "~3.4.8",
+    "chai": "~1.9.0",
+    "winston": "~0.7.2",
+    "mongoose": "~3.8.6",
+    "async": "~0.2.10",
+    "less-middleware": "~0.1.15",
+    "optimist": "~0.6.0",
+    "aws-sdk": "~2.0.0-rc10",
+    "crypto": "0.0.3",
+    "connect-mongo": "~0.4.0",
+    "passport-facebook": "~1.0.3",
+    "passport-twitter": "~1.0.2",
+    "passport-google-oauth": "~0.1.5",
+    "passport": "~0.2.0",
+    "bcrypt": "~0.7.7",
+    "passport-local": "~1.0.0"
+  },
+  "devDependencies": {
+    "gulp": "~3.6.0",
+    "mockery": "^1.4.0",
+    "rangle-gulp": "~0.0.5"
   }
 }

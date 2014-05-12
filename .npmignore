@@ -1,0 +1,12 @@
+.git/
+bower.json
+.jshintrc
+.bowerrc
+.jsbeautifyrc
+.npmignore
+client/
+examples/
+node_modules/
+private/
+tmp/
+*.tgz

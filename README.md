@@ -58,3 +58,23 @@ See `examples/basic-express/` for an example.
 # Deployment
 
 See docs/heroku.md for heroku deployment procedure.
+
+Note that if you have forked koast and want to deploy an application that
+would be making use of your formed version then add a git tag to the version
+you want to use and use git urls in your package.json and bower.json.
+
+For package.json:
+
+    "dependencies": {
+      // Specify the path to the right .tar.gz file.
+      "koast": "https://github.com/<someuser>/koast/archive/<sometag>.tar.gz",
+      ...
+    }
+
+For bower.json:
+
+    "dependencies": {
+      // Specify the repository and the tag.
+      "koast": "https://github.com/<someuser>/koast.git#<sometag>,
+      ...
+    }

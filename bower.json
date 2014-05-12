@@ -12,8 +12,6 @@
     "**/.*",
     "node_modules",
     "client/bower_components",
-    "test",
-    "tests",
     "tmp",
     "server",
     "examples"
@@ -21,6 +19,7 @@
   "dependencies": {
     "angular": "~1.2.16",
     "angular-mocks": "~1.2.16",
-    "sinon-chai": "~2.5.0"
+    "sinon-chai": "~2.5.0",
+    "lodash": "~2.4.1"
   }
 }
