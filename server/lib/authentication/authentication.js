@@ -15,6 +15,10 @@ var password = require('./password');
 var util = require('../util/util');
 var dbUtils = require('../database/db-utils');
 
+var bcrypt = require('bcrypt'),
+    SALT_WORK_FACTOR = 10;
+
+
 /**
  * Sets up session handling for the app.
  * @param {Object} app             An express app.
@@ -113,6 +117,55 @@ exports.addAuthenticationRoutes = function (app) {
       .then(null, util.makeErrorResponder(res));
 ***REMOVED***
 
+  // POST /auth/user - Add (register) a new user
+  app.post('/auth/user', function (req, res) {
+
+    if (!req.body.username || !req.body.password || !req.body.displayName || !req.body.email) {
+      res.send(401, 'You must provide username, email, and password');
+      return;
+    }
+
+
+    // Encrypt the password
+    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
+      if (err) {
+        log.error('Could not generate salt.')
+        return res.send(500, 'Internal error');
+***REMOVED***
+
+      // hash the password using our new salt
+      bcrypt.hash(req.body.password, salt, function (err, hash) {
+        if (err) {
+          log.error('Could not hash password');
+          return res.send(500, 'Internal error');
+***REMOVED***
+
+        var user = new users();
+
+        user.displayName = req.body.displayName;
+        user.password = hash;
+        user.username = req.body.username;
+        user.email = req.body.email;
+
+        user.save(function (err, user) {
+          // code 11000 is a mongoose code duplicate key error
+          if (err && err.code === 11000) {
+            log.error('Could not save user, is username and email unique? ' + err.message);
+            return res.send(422, 'Username already exists.');
+  ***REMOVED*** else if (err){
+            log.error(err.message);
+            return res.send(500, 'Internal error');
+  ***REMOVED***
+          if (user) {
+            log.info(user.username + ' was saved to the database');
+            res.send(200, user);
+  ***REMOVED***
+    ***REMOVED***
+
+  ***REMOVED***
+***REMOVED***
+***REMOVED***
+
   // POST /auth/logout - logs out the user.
   app.post('/auth/logout', function (req, res) {
     req.logout();
@@ -127,7 +180,9 @@ exports.addAuthenticationRoutes = function (app) {
     var query = {
       username: req.query.username
 ***REMOVED***
-    providerAccounts.find(query).exec()
+
+    var userCollection = authConfig.strategy === 'password' ? users : providerAccounts;
+    userCollection.find(query).exec()
       .then(function (matchingUsers) {
         res.send(200, matchingUsers.length === 0);
 ***REMOVED***)

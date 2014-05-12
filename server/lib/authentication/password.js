@@ -45,6 +45,11 @@ function makeVerifyFunction (users, config) {
     var handlers = makeHandlers(done);
     users.findOne(userQuery).exec()
       .then(function(user) {
+        if (!user){
+          done(null, false); // reject
+          return;
+***REMOVED***
+
         user = user.toObject();
         log.debug('found:', user);
         if (!user) {
@@ -76,7 +81,7 @@ exports.setup = function(app, users, config) {
 ***REMOVED***
       if (!user) {
         req.logout();
-        res.send(401, 'Wrong password or no such user.');
+        res.send(422, 'Wrong password or no such user.');
 ***REMOVED*** else {
         req.login(user, function(err) {
           if (err) {
