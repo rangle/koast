@@ -18,6 +18,12 @@ gulp.task('karma', rg.karma({
   vendor: karmaVendorFiles
 }));
 
+gulp.task('karma-ci', rg.karma({
+  files: karmaFiles,
+  vendor: karmaVendorFiles,
+  karmaConfig: 'client/testing/karma-ci.conf.js'
+}));
+
 gulp.task('karma-watch', rg.karmaWatch({
   files: karmaFiles,
   vendor: karmaVendorFiles
