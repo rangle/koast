@@ -14,10 +14,60 @@ var oauth = require('./oauth');
 var password = require('./password');
 var util = require('../util/util');
 var dbUtils = require('../database/db-utils');
+var Q = require("q");
+
 
 var bcrypt = require('bcrypt'),
     SALT_WORK_FACTOR = 10;
 
+
+/**
+ * Give a user object and password, save the user to the database
+ * with an encryped password.
+ *
+ * Returns a promise which will be resolved if the user was succesfully saved
+ * or rejected if an error occured.
+ *
+ * @param {Object} user
+ * @param {String} password
+ */
+function saveUser(user, password) {
+  var deferred = Q.defer();
+
+  // Encrypt the password
+  SALT_WORK_FACTOR = 10;
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    if (err) {
+      log.error('Could not generate salt.');
+      return deferred.reject(err);
+    }
+
+    // Hash the password using our new salt
+    bcrypt.hash(password, salt, function(err, hash) {
+      if (err) {
+        log.error('Could not hash password');
+        return deferred.reject(err);
+      }
+
+      user.password = hash;
+
+      // Save the user
+      user.save(function(err, user) {
+        if (user) {
+          log.info(user.username + ' was saved to the database');
+          deferred.resolve(user);
+        } else if (err) {
+          return deferred.reject(err);
+        }
+      });
+
+    });
+  });
+
+  return deferred.promise;
+}
+
+exports.saveUser = saveUser;
 
 /**
  * Sets up session handling for the app.
@@ -125,44 +175,26 @@ exports.addAuthenticationRoutes = function (app) {
       return;
     }
 
+    var user = new users();
+    user.displayName = req.body.displayName;
+    user.username = req.body.username;
+    user.email = req.body.email;
 
-    // Encrypt the password
-    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-      if (err) {
-        log.error('Could not generate salt.')
+    saveUser(user, req.body.password)
+    .then(function(user){
+      if (user) {
+        log.info(user.username + ' was saved to the database');
+        res.send(200, user);
+      }
+    }, function(err){
+      if (err && err.code === 11000) {
+        // code 11000 is a mongoose code duplicate key error
+        log.error('Could not save user, is username and email unique? ' + err.message);
+        return res.send(422, 'Username already exists.');
+      } else if (err){
+        log.error(err.message);
         return res.send(500, 'Internal error');
       }
-
-      // hash the password using our new salt
-      bcrypt.hash(req.body.password, salt, function (err, hash) {
-        if (err) {
-          log.error('Could not hash password');
-          return res.send(500, 'Internal error');
-        }
-
-        var user = new users();
-
-        user.displayName = req.body.displayName;
-        user.password = hash;
-        user.username = req.body.username;
-        user.email = req.body.email;
-
-        user.save(function (err, user) {
-          // code 11000 is a mongoose code duplicate key error
-          if (err && err.code === 11000) {
-            log.error('Could not save user, is username and email unique? ' + err.message);
-            return res.send(422, 'Username already exists.');
-          } else if (err){
-            log.error(err.message);
-            return res.send(500, 'Internal error');
-          }
-          if (user) {
-            log.info(user.username + ' was saved to the database');
-            res.send(200, user);
-          }
-        });
-
-      });
     });
   });
 
@@ -205,3 +237,4 @@ exports.addAuthenticationRoutes = function (app) {
     password.setup(app, users, {});
   }
 };
+

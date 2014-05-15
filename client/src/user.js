@@ -177,6 +177,14 @@ angular.module('koast-user', [])
         .then(null, $log.error);
     };
 
+    user.resetPassword = function(email){
+      return $http.post(koastOauth.makeRequestURL('/forgot'), {email: email});
+    };
+
+    user.setNewPassword = function(newPassword, token){
+      return $http.post(koastOauth.makeRequestURL('/reset/' + token), {password: newPassword});
+    };
+
     // Attaches a registration handler - afunction that will be called when we
     // have a new user.
     user.setRegistrationHanler = function (handler) {

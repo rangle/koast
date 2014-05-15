@@ -52,7 +52,12 @@ exports.setConfigDirectory = function (newConfigDirectory, options) {
   }
 };
 
-exports.getConfig = function (key) {
+exports.getConfig = function (key, ignoreCache) {
+
+  if (ignoreCache){
+    return readJsonFromFile(key + '.json');
+  }
+
   cachedConfigs[key] = cachedConfigs[key] || readJsonFromFile(key + '.json');
   return cachedConfigs[key];
 };
