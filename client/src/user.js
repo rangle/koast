@@ -33,6 +33,9 @@ angular.module('koast-user', [])
 
     // expects end point to precede with a forward-slash "/"
     service.makeRequestURL = function (endPoint) {
+      if (!endPoint){
+        endPoint = ""
+***REMOVED***
       return baseUrl + endPoint;
 ***REMOVED***
 
