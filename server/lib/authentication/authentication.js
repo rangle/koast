@@ -179,6 +179,8 @@ exports.addAuthenticationRoutes = function (app) {
     user.displayName = req.body.displayName;
     user.username = req.body.username;
     user.email = req.body.email;
+    if(req.body.userdata_id)
+      user.userdata_id = req.body.userdata_id;
 
     saveUser(user, req.body.password)
     .then(function(user){
