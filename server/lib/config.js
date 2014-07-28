@@ -9,7 +9,7 @@
 var fs = require('fs');
 ***REMOVED***
 var environment;
-var configDirectory = 'config';
+var configDirectory;
 var cachedConfigs = {};
 
 function demandEnvironment() {
@@ -21,9 +21,8 @@ function demandEnvironment() {
 function getFullConfigFilePath(subpath) {
   /*jshint expr:true */
   demandEnvironment();
-  expect(configDirectory).to.not.be.undefined;
   expect(subpath).to.not.be.undefined;
-  return configDirectory + '/' + environment + '/' + subpath;
+  return (configDirectory || 'config') + '/' + environment + '/' + subpath;
 }
 
 function readJsonFromFile(subpath) {

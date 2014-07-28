@@ -25,7 +25,7 @@ exports.setErrorHandler = function (newHandler) {
   errorHandler = newHandler;
 };
 
-function prepareQuery(req, requiredQueryFields, optionalQueryFields) {
+function prepareQuery(req, options) {
   var query = {};
   // Constrain the query by each param.
   _.keys(req.params).forEach(function (param) {
@@ -34,28 +34,30 @@ function prepareQuery(req, requiredQueryFields, optionalQueryFields) {
 
   // Constrain the query by each required query field. Throw an error if the
   // value is not supplied.
-  requiredQueryFields = requiredQueryFields || [];
-  requiredQueryFields.forEach(function (fieldName) {
-    if (!req.query[fieldName]) {
-      throw new Error('Missing required field: ' + fieldName);
-    }
-    query[fieldName] = req.query[fieldName];
+  if (options.requiredQueryFields) {
+    options.requiredQueryFields.forEach(function (fieldName) {
+      if (!req.query[fieldName]) {
+        throw new Error('Missing required field: ' + fieldName);
 ***REMOVED***
+      query[fieldName] = req.query[fieldName];
+***REMOVED***
+  }
 
   // Constrain the query by each optional query field. Skip those for which
   // we got no value.
-  optionalQueryFields = optionalQueryFields || [];
-  optionalQueryFields.forEach(function (fieldName) {
-    if (req.query[fieldName]) {
-      query[fieldName] = req.query[fieldName];
-    }
+  if (options.optionalQueryFields) {
+    options.optionalQueryFields.forEach(function (fieldName) {
+      if (req.query[fieldName]) {
+        query[fieldName] = req.query[fieldName];
 ***REMOVED***
+***REMOVED***
+  }
+
   return query;
 }
 
 // Makes a result handler for mongo queries.
-function makeResultHandler(request, response, filter, authorizer, options) {
-  options = options || {};
+function makeResultHandler(request, response, options) {
   return function (error, results) {
     if (error) {
       log.error(error);
@@ -78,45 +80,45 @@ function makeResultHandler(request, response, filter, authorizer, options) {
         results = [results];
 ***REMOVED***
       results = _.filter(results, function(result) {
-        return filter(result, request);
+        return options.filter(result, request);
   ***REMOVED***
 
-      results = _.map(results, function (result) {
-        result = {
-          meta: {
-            can: {}
-    ***REMOVED***
-          data: result
-***REMOVED***;
-        authorizer(result, request, response);
-        return result;
-  ***REMOVED***
+      if (options.useEnvelope) {
+        results = _.map(results, function (result) {
+          result = {
+            meta: {
+              can: {}
+      ***REMOVED***
+            data: result
+  ***REMOVED***;
+          options.authorizer(request, result, response);
+          return result;
+    ***REMOVED***        
+***REMOVED***
       response.send(200, results);
     }
   };
 }
 
 // Makes a getter function.
-handlerFactories.get = function (model, queryDecorator, filter, authorizer, moreArgs) {
-  var requiredQueryFields = moreArgs[0];
-  var optionalQueryFields = moreArgs[1];
+handlerFactories.get = function (options) {
   return function (req, res) {
-    var query = prepareQuery(req, requiredQueryFields, optionalQueryFields);
-    queryDecorator(query, req, res);
-    model.find(query).lean().exec(makeResultHandler(req, res, filter, authorizer));
+    var query = prepareQuery(req, options);
+    options.queryDecorator(query, req, res);
+    options.actualModel.find(query).lean().exec(makeResultHandler(req, res, options));
   };
 };
 
 // Makes an updater function.
-handlerFactories.put = function (model, queryDecorator, filter, authorizer) {
+handlerFactories.put = function (options) {
   return function (req, res) {
-    var query = prepareQuery(req);
-    queryDecorator(query, req, res);
-    model.findOne(query, function (err, object) {
+    var query = prepareQuery(req, options);
+    options.queryDecorator(query, req, res);
+    options.actualModel.findOne(query, function (err, object) {
 
       if (!object) {
         return res.send(404, 'Resource not found.');
-***REMOVED*** else if (!filter(object, req)) {
+***REMOVED*** else if (!options.filter(object, req)) {
         return res.send(401, 'Not allowed to PUT.');
 ***REMOVED***
 
@@ -127,31 +129,31 @@ handlerFactories.put = function (model, queryDecorator, filter, authorizer) {
   ***REMOVED***
       // We are using object.save() rather than findOneAndUpdate to ensure that
       // pre middleware is triggered.
-      object.save(makeResultHandler(req, res, filter, authorizer));
+      object.save(makeResultHandler(req, res, options));
 ***REMOVED***
   };
 };
 
 // Makes an poster function.
-handlerFactories.post = function (model, queryDecorator, filter, authorizer) {
+handlerFactories.post = function (options) {
   return function (req, res) {
-    var object = model(req.body);
-    if (!filter(object, req)) {
+    var object = options.actualModel(req.body);
+    if (!options.filter(object, req)) {
       return res.send(401, 'Not allowed to POST.');
     }
     if (!object) {
       return res.send(500, 'Failed to create an object.');
     }
-    object.save(makeResultHandler(req, res, filter, authorizer));
+    object.save(makeResultHandler(req, res, options));
   };
 };
 
 // Makes an deleter function.
-handlerFactories.del = function (model, queryDecorator, filter, authorizer) {
+handlerFactories.del = function (options) {
   return function (req, res) {
-    var query = prepareQuery(req);
-    queryDecorator(query, req, res);
-    model.remove(query, makeResultHandler(req, res, filter, authorizer));
+    var query = prepareQuery(req, options);
+    options.queryDecorator(query, req, res);
+    options.actualModel.remove(query, makeResultHandler(req, res, options));
   };
 };
 
@@ -164,19 +166,30 @@ handlerFactories.del = function (model, queryDecorator, filter, authorizer) {
  */
 exports.makeMapper = function (dbConnection) {
   var service = {};
-  service.queryDecorator = function () {}; // The default is to do nothing.
-  service.filter = function() {
+
+  service.defaults = {
+    useEnvelope: true
+  };
+  service.defaults.queryDecorator = function () {}; // The default is to do nothing.
+  service.defaults.filter = function() {
     // The default is to allow everything.
     return true;
   };
-  service.authorizer = function () {}; // The default is to do nothing.
+  service.defaults.authorizer = function () {}; // The default is to do nothing.
 
   ['get', 'post', 'put', 'del'].forEach(function (method) {
-    service[method] = function (modelName) {
-      var model = dbConnection.model(modelName);
-      var makeHandler = handlerFactories[method];
-      return makeHandler(model, service.queryDecorator, service.filter, service.authorizer,
-        Array.prototype.slice.apply(arguments).slice(1));
+    service[method] = function (optionsSpecificToRoute) {
+      var model;
+      var handlerFactory;
+      var options = {};
+
+      options = _.extend(options, service.defaults);
+      options = _.extend(options, optionsSpecificToRoute);
+
+      options.actualModel = dbConnection.model(options.model);
+      handlerFactory = handlerFactories[method]; 
+
+      return handlerFactory(options);
 ***REMOVED***
 ***REMOVED***
 

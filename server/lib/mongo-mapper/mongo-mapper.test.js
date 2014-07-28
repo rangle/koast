@@ -9,7 +9,7 @@ var _ = require('underscore');
 var dbUtils = require('../database/db-utils');
 var mongoMapper = require('../mongo-mapper/mongo-mapper');
 
-describe('Testing mongoMapper.', function () {
+describe('mongoMapper', function () {
   var mapper;
   var connection;
   var robotGetter;
@@ -30,7 +30,7 @@ describe('Testing mongoMapper.', function () {
     return dbUtils.closeAllConnectionsNow();
 ***REMOVED***
 
-  it('Create a connection', function (done) {
+  it('should have a connection', function (done) {
     var connectionPromise = dbUtils.createConfiguredConnections(['db1']);
     expect(Q.isPromise(connectionPromise)).to.be.true;
     connectionPromise
@@ -43,7 +43,7 @@ describe('Testing mongoMapper.', function () {
       .fail(done);
 ***REMOVED***
 
-  it('Create a mapper', function () {
+  it('should initialize', function () {
     mapper = mongoMapper.makeMapper(connection);
     expect(mapper).to.not.be.undefined;
     expect(mapper).to.have.property('get');
@@ -62,6 +62,7 @@ describe('Testing mongoMapper.', function () {
     }, function (error, result) {
       expect(error).to.not.exist;
       robotId = result._id;
+      console.log(robotId);
       done();
 ***REMOVED***
 ***REMOVED***
@@ -86,13 +87,17 @@ describe('Testing mongoMapper.', function () {
   }
 
   it('Create a get handler and get a robot we have', function (done) {
-    robotGetter = mapper.get('robots');
+    robotGetter = mapper.get({
+      model: 'robots'
+***REMOVED***
+    console.log(robotId);
     robotGetter(makeRequest({
       params: {
         _id: robotId
 ***REMOVED***
     }), makeResponseTester(200, done, function (result) {
       expect(result.length).to.equal(1);
+      console.log(result[0]);
       expect(result[0].data.robotNumber).to.equal(1);
     }));
 ***REMOVED***
@@ -108,7 +113,9 @@ describe('Testing mongoMapper.', function () {
 ***REMOVED***
 
   it('Create a list getter and get all robots.', function (done) {
-    robotListGetter = mapper.get('robots');
+    robotListGetter = mapper.get({
+      model: 'robots'
+***REMOVED***
     robotListGetter(makeRequest(), makeResponseTester(200, done, function (
       result) {
       expect(result.length).to.equal(1);
@@ -116,7 +123,9 @@ describe('Testing mongoMapper.', function () {
 ***REMOVED***
 
   it('Create a poster and post a new robot.', function (done) {
-    robotPoster = mapper.post('robots');
+    robotPoster = mapper.post({
+      model: 'robots'
+***REMOVED***
     robotPoster(makeRequest({body: {
       robotNumber: 2
     }}), makeResponseTester(200, done, function (result) {
@@ -135,7 +144,9 @@ describe('Testing mongoMapper.', function () {
 ***REMOVED***
 
   it('Create an updater and update the posted robot.', function (done) {
-    robotUpdater = mapper.put('robots');
+    robotUpdater = mapper.put({
+      model: 'robots'
+***REMOVED***
     robotUpdater(makeRequest({
       params: {
         _id: postedRobotId
@@ -159,7 +170,9 @@ describe('Testing mongoMapper.', function () {
 ***REMOVED***
 
   it('Delete the updated robot.', function (done) {
-    robotDeleter = mapper.del('robots');
+    robotDeleter = mapper.del({
+      model: 'robots'
+***REMOVED***
     robotDeleter(makeRequest({
       params: {
         _id: postedRobotId

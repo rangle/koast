@@ -11,13 +11,10 @@ mapper.queryDecorator = function(query, req, res) {
   // query.owner = 'luke';
 };
 
-// Annotates the results with authorization information.
-mapper.authorizer = function(result, req, res) {
+function isOwner(req, result) {
   var username = req.user && req.user.data.username;
-  if (username && (result.data.owner === username)) {
-    result.meta.can.edit = true;
-  }
-};
+  return username && (result.data.owner === username);
+}
 
 // The actual routes.
 exports.routes = [
@@ -26,4 +23,31 @@ exports.routes = [
   ['del', 'robots/:robotNumber', mapper.del('robots')],
   ['put', 'robots/:robotNumber', mapper.put('robots')],
   ['post', 'robots', mapper.post('robots')]
+];
+
+exports.routes = [
+  {
+    method: 'get',
+    route: 'robots',
+    handler: mapper.get({
+      model: 'robots',
+      useEnvelope: true
+    })
+  },
+  {
+    method: 'get',
+    route: 'robots/:robotNumber',
+    queryDecorator: function (query, request, response) {
+      query.owner = 'luke';
+    },
+    annotator: function(req, result, res) {
+      if (isOwner(req, result)) {
+        result.meta.can.edit = true;
+***REMOVED***
+    },
+    handler: mapper.get({
+      model: 'robots',
+      useEnvelope: true
+    })
+  }
 ];
