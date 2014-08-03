@@ -2,6 +2,7 @@
 
 'use strict';
 
+var q = require('q');
 var optimist = require('optimist');
 var _ = require('underscore');
 var fs = require('fs');
@@ -10,6 +11,8 @@ var fs = require('fs');
 var dbUtils = require('../database/db-utils');
 
 var usage = 'Usage: $0 --env [env] <command>';
+
+var connection;
 
 var argv = optimist
   .usage(usage)
@@ -45,15 +48,24 @@ function demand(keys) {
 ***REMOVED***
 }
 
-function getModel() {
-  return dbUtils.createConfiguredConnections()
-    .then(function () {
-      var handles = dbUtils.getConnectionHandles();
-      if (handles.length > 1) {
-        demand('db');
+function getConnection() {
+  if (connection) {
+    return q.when(connection);
+  } else {
+    return dbUtils.createConfiguredConnections()
+      .then(function () {
+        var handles = dbUtils.getConnectionHandles();
+        if (handles.length > 1) {
+          demand('db');
 ***REMOVED***
-      return dbUtils.getConnectionNow(argv.db || handles[0]);
-    })
+        connection = dbUtils.getConnectionNow(argv.db || handles[0]);
+        return connection;
+  ***REMOVED***
+  }
+}
+
+function getModel() {
+  return getConnection()
     .then(function (connection) {
       var model;
       demand('col');
@@ -72,44 +84,74 @@ function exitOnError(error) {
   }
 }
 
-handlers.load = ['Loads data into the database.',
-  function () {
-    getModel()
-      .then(function (model) {
-        var data;
-        demand('src');
-        data = JSON.parse(fs.readFileSync(argv.src).toString());
-        model.create(data, function (error, result) {
+function loadData() {
+  var deferred = q.defer();
+  return getModel()
+    .then(function (model) {
+      var data;
+      demand('src');
+      data = JSON.parse(fs.readFileSync(argv.src).toString());
+      model.create(data, function (error, result) {
+        exitOnError(error);
+        // Now check what we have in the database.
+        model.find({}, function (error, result) {
           exitOnError(error);
-          // Now check what we have in the database.
-          model.find({}, function (error, result) {
-            exitOnError(error);
-            console.log('Loaded %d items into %s.', data.length, argv.col);
-            console.log('We now have %d items in %s.', result.length,
-              argv.col);
-            process.exit();
-      ***REMOVED***
+          deferred.resolve(result.length);
     ***REMOVED***
+  ***REMOVED***
+      return deferred.promise;
+***REMOVED***
+}
+
+handlers.load = ['Loads data into the database.',
+  function() {
+    loadData()
+      .then(function(numberOfItems) {
+        console.log('Loaded data. We now have %d items in %s.', numberOfItems,
+            argv.col);
+        process.exit();
 ***REMOVED***)
       .fail(exitOnError);
   }
 ];
 
-handlers.drop = ['Drops all data from a mongo collection.',
-  function () {
-    getModel()
-      .then(function (model) {
-        model.remove({}, function (error, result) {
+function dropCollection() {
+  var deferred = q.defer();
+  return getModel()
+    .then(function (model) {
+      model.remove({}, function (error, result) {
+        exitOnError(error);
+        // Now check what we have in the database.
+        model.find({}, function (error, result) {
           exitOnError(error);
-          // Now check what we have in the database.
-          model.find({}, function (error, result) {
-            exitOnError(error);
-            console.log('Gone.');
-            console.log('We now have %d items in %s.', result.length,
-              argv.col);
-            process.exit();
-      ***REMOVED***
+          deferred.resolve(result.length);
     ***REMOVED***
+  ***REMOVED***
+      return deferred.promise;
+***REMOVED***
+}
+
+handlers.drop = ['Drops all data from a mongo collection.',
+  function() {
+    dropCollection(numberOfItems)
+      .then(function() {
+        console.log('We now have %d items in %s.', numberOfItems, argv.col);
+        process.exit();
+***REMOVED***)
+      .fail(exitOnError);
+  }
+];
+
+handlers.reload = ['Drops all data from a mongo collection and reloads from a file',
+  function() {
+    dropCollection()
+      .then(function() {
+        return loadData();
+***REMOVED***)
+      .then(function(numberOfItems) {
+        console.log('Reloaded data. We now have %d items in %s.', numberOfItems,
+            argv.col);
+        process.exit();
 ***REMOVED***)
       .fail(exitOnError);
   }

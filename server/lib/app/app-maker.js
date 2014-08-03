@@ -27,6 +27,12 @@ function mountApiSubroute (app, routeConfig, module, subroute) {
 
   path = routeConfig.route + '/' + subroute.route;
 
+  log.verbose('      Endpoint:', subroute.method, path);
+
+  if (path.search('//') > 0) {
+    log.warn('API endpoint path contains a double slash:', path);
+  }
+
   authFunction = subroute.authorization || module.defaults.authorization;
 
   app[subroute.method](path, function (req, res, next) {  
@@ -72,6 +78,8 @@ exports.makeExpressApp = function () {
   var app = express();
   var indexHtml;
 
+  log.verbose('appConfig:', appConfig);
+
   // Use CORS if configured.
   if (corsConfig) {
     useCors(app, corsConfig);
@@ -107,6 +115,11 @@ exports.makeExpressApp = function () {
     appConfig.routes.forEach(function (routeConfig) {
       log.verbose('  Mounting %s route on %s.', routeConfig.type,
         routeConfig.route);
+
+      if (routeConfig.route[0] !== '/') {
+        log.warn('Route path does not start with a slash:', routeConfig.route);
+***REMOVED***
+
       if (routeConfig.type === 'static') {
         // Static is the easy case, let's handle it right here.
         app.use(routeConfig.route, express.static(routeConfig.path));

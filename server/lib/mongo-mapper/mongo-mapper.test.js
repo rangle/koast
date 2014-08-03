@@ -62,7 +62,6 @@ describe('mongoMapper', function () {
     }, function (error, result) {
       expect(error).to.not.exist;
       robotId = result._id;
-      console.log(robotId);
       done();
 ***REMOVED***
 ***REMOVED***
@@ -90,14 +89,12 @@ describe('mongoMapper', function () {
     robotGetter = mapper.get({
       model: 'robots'
 ***REMOVED***
-    console.log(robotId);
     robotGetter(makeRequest({
       params: {
         _id: robotId
 ***REMOVED***
     }), makeResponseTester(200, done, function (result) {
       expect(result.length).to.equal(1);
-      console.log(result[0]);
       expect(result[0].data.robotNumber).to.equal(1);
     }));
 ***REMOVED***

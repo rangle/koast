@@ -157,7 +157,7 @@ exports.addAuthenticationRoutes = function (app) {
             return res.send(500, 'Internal error');
   ***REMOVED***
           if (user) {
-            log.info(user.username + ' was saved to the database');
+            log.verbose(user.username + ' was saved to the database');
             res.send(200, user);
   ***REMOVED***
     ***REMOVED***
@@ -192,7 +192,7 @@ exports.addAuthenticationRoutes = function (app) {
   // For now configure this regardless of authentication config, for backwards
   // compatibility.
   if (oauthConfig) {
-    log.info('Adding OAuth routes');
+    log.verbose('Adding OAuth routes');
     // Finally, use oauth.init to setup routes for all configured providers.
     _.keys(oauthConfig).forEach(function (provider) {
       oauth.init(app, provider, oauthConfig[provider], providerAccounts);
@@ -200,7 +200,7 @@ exports.addAuthenticationRoutes = function (app) {
   }
 
   // Configure password authentication if necessary.
-  console.log('Authentication strategy:', authConfig.strategy);
+  log.verbose('Authentication strategy:', authConfig.strategy);
   if (authConfig.strategy === 'password') {
     password.setup(app, users, {***REMOVED***
   }

@@ -11,7 +11,7 @@ angular.module('koast-user', [])
 
     // This is only a default value, the Koast client must set baseUrl via Koast.init()
     // if the client is served on a different server than that of the API server.
-    var baseUrl = $location.absUrl().split('/').slice(0, 3).join('/') + '/';
+    var baseUrl = $location.absUrl().split('/').slice(0, 3).join('/');
 
 
     // Makes a URL for the OAuth provider.
@@ -84,23 +84,21 @@ angular.module('koast-user', [])
       return user.isAuthenticated;
     }
 
-    // Returns true if the user is authenticated. If there's a registrationHandler
-    // then it is called.
+    // Calls registration handler if necessary. Returns a boolean indicating
+    // whether the user is authenticated or a promise for such a boolean.
     function callRegistrationHandler(isAuthenticated) {
-      $log.debug('isAuthenticated?', isAuthenticated);
       // Call the registration handler if the user is new and the handler
       // is defined.
       if (isAuthenticated && (!user.meta.isRegistered) &&
         registrationHandler) {
         // Using $timeout to give angular a chance to update the view.
-        // $timeout returns a promise for a promise that is returned by
-        // $registrationHandler.
+        // $timeout returns a promise equivalent to the one returned by
+        // registrationHandler.
         return $timeout(registrationHandler, 0)
           .then(function () {
             return isAuthenticated;
       ***REMOVED***
 ***REMOVED*** else {
-        user.isReady = true;
         return isAuthenticated;
 ***REMOVED***
     }
@@ -110,10 +108,15 @@ angular.module('koast-user', [])
     // across a range of authentication setups and we are not limited by
     // cookie size.
     function getUserData(url) {
+
       // First get the current user data from the server.
       return $http.get(url || koastOauth.makeRequestURL('/auth/user'))
         .then(setUser)
         .then(callRegistrationHandler)
+        .then(function(isAuthenticated) {
+          user.isReady = true;
+          return isAuthenticated;
+***REMOVED***)
         .then(null, $log.error);
     }
 

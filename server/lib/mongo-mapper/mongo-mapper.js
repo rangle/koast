@@ -91,7 +91,7 @@ function makeResultHandler(request, response, options) {
       ***REMOVED***
             data: result
   ***REMOVED***;
-          options.authorizer(request, result, response);
+          options.annotator(request, result, response);
           return result;
     ***REMOVED***        
 ***REMOVED***
@@ -167,25 +167,33 @@ handlerFactories.del = function (options) {
 exports.makeMapper = function (dbConnection) {
   var service = {};
 
-  service.defaults = {
+  service.options = {
     useEnvelope: true
   };
-  service.defaults.queryDecorator = function () {}; // The default is to do nothing.
-  service.defaults.filter = function() {
+  service.options.queryDecorator = function () {}; // The default is to do nothing.
+  service.options.filter = function() {
     // The default is to allow everything.
     return true;
   };
-  service.defaults.authorizer = function () {}; // The default is to do nothing.
+  service.options.annotator = function () {}; // The default is to do nothing.
 
   ['get', 'post', 'put', 'del'].forEach(function (method) {
-    service[method] = function (optionsSpecificToRoute) {
+    service[method] = function (arg) {
       var model;
       var handlerFactory;
       var options = {};
+      var optionsSpecificToRoute;
 
-      options = _.extend(options, service.defaults);
+      if (typeof arg === 'string') {
+        optionsSpecificToRoute = {
+          model: arg
+***REMOVED***;
+***REMOVED*** else {
+        optionsSpecificToRoute = arg
+***REMOVED***
+
+      options = _.extend(options, service.options);
       options = _.extend(options, optionsSpecificToRoute);
-
       options.actualModel = dbConnection.model(options.model);
       handlerFactory = handlerFactories[method]; 
 

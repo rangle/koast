@@ -6,24 +6,28 @@ var koast = require('koast');
 var connection = koast.getDatabaseConnectionNow();
 var mapper = koast.makeMongoMapper(connection);
 
-// Attaches conditions to queries.
-mapper.queryDecorator = function(query, req, res) {
-  // query.owner = 'luke';
+exports.defaults = {};
+exports.defaults.authorization = function defaultAuthorization(req, res) {
+  return true;
 };
+
 
 function isOwner(req, result) {
   var username = req.user && req.user.data.username;
   return username && (result.data.owner === username);
 }
 
-// The actual routes.
-exports.routes = [
-  ['get', 'robots', mapper.get('robots', [])],
-  ['get', 'robots/:robotNumber', mapper.get('robots', [], ['owner'])],
-  ['del', 'robots/:robotNumber', mapper.del('robots')],
-  ['put', 'robots/:robotNumber', mapper.put('robots')],
-  ['post', 'robots', mapper.post('robots')]
-];
+mapper.options.useEnvelope = true;
+
+function robotAnnotator (req, result, res) {
+  if (isOwner(req, result)) {
+    result.meta.can.edit = true;
+  }
+};
+
+function robotQueryDecorator (query, request, response) {
+  // query.owner = 'luke';
+};
 
 exports.routes = [
   {
@@ -31,23 +35,33 @@ exports.routes = [
     route: 'robots',
     handler: mapper.get({
       model: 'robots',
-      useEnvelope: true
+      queryDecorator: robotQueryDecorator,
+      annotator: robotAnnotator
     })
   },
   {
     method: 'get',
     route: 'robots/:robotNumber',
-    queryDecorator: function (query, request, response) {
-      query.owner = 'luke';
-    },
-    annotator: function(req, result, res) {
-      if (isOwner(req, result)) {
-        result.meta.can.edit = true;
-***REMOVED***
-    },
     handler: mapper.get({
       model: 'robots',
-      useEnvelope: true
+      optionalQueryFields: ['owner'],
+      // queryDecorator: robotQueryDecorator,
+      annotator: robotAnnotator
     })
+  },
+  {
+    method: 'del',
+    route: 'robots/:robotNumber',
+    handler: mapper.del('robots')
+  },
+  {
+    method: 'put',
+    route: 'robots/:robotNumber',
+    handler: mapper.put('robots')
+  },
+  {
+    method: 'post',
+    route: 'robots',
+    handler: mapper.post('robots')
   }
 ];

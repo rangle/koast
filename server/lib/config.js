@@ -37,6 +37,9 @@ exports.setEnvironment = function (newEnvironment, options) {
   if (environment && !options.force) {
     throw new Error('Cannot change the environment once it was set.');
   } else {
+    if (!newEnvironment) {
+      newEnvironment = process.env.NODE_ENV || 'local';
+    }
     environment = newEnvironment;
   }
   cachedConfigs = {};
