@@ -499,6 +499,7 @@ angular.module('koast-user', [])
 
     var registrationHandler; // An optional callback for registering an new user.
     var statusPromise; // A promise resolving to user's authentication status.
+    var authenticatedDeferred = $q.defer();
 
     // Sets the user's data and meta data, for social login
     // Returns true if the user is authenticated.
@@ -509,6 +510,7 @@ angular.module('koast-user', [])
       if (newUser.isAuthenticated) {
         user.data = newUser.data;
         user.meta = newUser.meta;
+        authenticatedDeferred.resolve();
 ***REMOVED***
       user.isAuthenticated = newUser.isAuthenticated;
       return newUser.isAuthenticated;
@@ -520,6 +522,7 @@ angular.module('koast-user', [])
       if (response.data && response.data.username) {
         user.data = response.data;
         user.isAuthenticated = true;
+        authenticatedDeferred.resolve();
         user.meta = response.meta;
 ***REMOVED*** else {
         user.data = {};
@@ -559,6 +562,9 @@ angular.module('koast-user', [])
         .then(callRegistrationHandler)
         .then(function(isAuthenticated) {
           user.isReady = true;
+          if (isAuthenticated) {
+            authenticatedDeferred.resolve();
+  ***REMOVED***
           return isAuthenticated;
 ***REMOVED***)
         .then(null, $log.error);
@@ -642,6 +648,11 @@ angular.module('koast-user', [])
     user.init = function (options) {
       koastOauth.setBaseUrl(options.baseUrl);
       return user.getStatusPromise();
+***REMOVED***
+
+    // Returns a promise that resolves when the user is authenticated.
+    user.whenAuthenticated = function() {
+      return authenticatedDeferred.promise;
 ***REMOVED***
 
     return user;
