@@ -29,7 +29,11 @@ angular.module('koast-resource', ['koast-user'])
 
       Object.defineProperty(this, 'can', {
         get: function () {
-          return result.meta.can;
+          if(result.meta){
+            return result.meta.can;
+          }else{
+            return true;
+          }
         }
       });
 
