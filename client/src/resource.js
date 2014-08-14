@@ -24,7 +24,6 @@ angular.module('koast-resource', ['koast-user'])
     function Resource(endpoint, result, options) {
       var resource = this;
       var data;
-      console.log('resource options:', options);
       if (options.useEnvelope) {
         data = result.data;
         if (!data) {
@@ -33,7 +32,6 @@ angular.module('koast-resource', ['koast-user'])
 ***REMOVED*** else {
         data = result;
 ***REMOVED***
-      console.log('data', data);
       _.keys(data).forEach(function (key) {
         resource[key] = data[key];
   ***REMOVED***
