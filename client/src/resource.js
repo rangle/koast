@@ -135,47 +135,49 @@ angular.module('koast-resource', ['koast-user'])
     var prefixes = {};
     var endpoints = {};
 
+    // Converts an array of raw results coming from the server into an array
+    // of resources. If options specify a singular resource, then we just
+    // return that resource.
+    function convertResultsToResources(results, options) {
+      var resources = _.map(results, function(rawResult) {
+        return new KoastResource(options.endpoint, rawResult, options);
+  ***REMOVED***
+
+      if (options.singular) {
+        if (resources.length === 0) {
+          resources = null;
+***REMOVED*** else if (resources.length > 1) {
+          $log.warn('Expected a singular resource, got ' + resources.length);
+          resources = resources[0];
+***REMOVED*** else {
+          resources = resources[0];
+***REMOVED***
+***REMOVED***
+      return resources;
+    }
+
     // An auxiliary function that actually gets the resource. This should work
     // for either a request to get a single item or a query for multiple.
     function get(endpointHandle, params, query, resourceOptions) {
-      var deferred = $q.defer();
       var endpoint = endpoints[endpointHandle];
       var headers = {};
       var options = {};
+      var getConfig = {
+        params: query,
+        headers: headers
+***REMOVED***;
       options = angular.extend(options, endpoint.options);
       options = angular.extend(options, resourceOptions);
+      options.endpoint = endpoint;
       if (!endpoint) {
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
       KoastServerHelper.addAuthHeaders(headers);
-
-      $http.get(endpoint.makeGetUrl(params), {
-        params: query,
-        headers: headers
-***REMOVED***)
-        .success(function (result) {
-          var resources = [];
-          result.forEach(function (result) {
-            var resource = new KoastResource(endpoint, result, options);
-            resources.push(resource);
-      ***REMOVED***
-
-          if (options.singular) {
-            if (resources.length === 0) {
-              return null;
-***REMOVED*** else if (resources.length > 1) {
-              $log.warn('Expected a singular resource, got ' + resources.length);
-***REMOVED***
-            deferred.resolve(resources[0]);
-  ***REMOVED*** else {
-            deferred.resolve(resources);
-  ***REMOVED***
-***REMOVED***)
-        .error(function (error) {
-          deferred.reject(error);
+      return $http.get(endpoint.makeGetUrl(params), getConfig)
+        .then(function (response) {
+          return convertResultsToResources(response.data, options);
     ***REMOVED***
-      return deferred.promise;
     }
 
     // Sets the prefix for API URLs. The prefix can be optionally associated
