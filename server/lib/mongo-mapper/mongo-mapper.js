@@ -63,16 +63,14 @@ function makeResultHandler(request, response, options) {
       log.error(error);
       response.send(500, 'Database error: ', error.toString());
     } else {
-
       if (options.postLoadProcessor) {
         results = options.postLoadProcessor(results, response);
 ***REMOVED***
 
       response.setHeader('Content-Type', 'text/plain');
-
       if (!_.isObject(results)) {
         // Do not wrap non-object results.
-        response.send(200, results);
+        response.send(200, (results || '').toString());
         return;
 ***REMOVED***
 
