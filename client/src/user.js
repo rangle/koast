@@ -58,7 +58,19 @@ angular.module('koast-user', [])
 
     var registrationHandler; // An optional callback for registering an new user.
     var statusPromise; // A promise resolving to user's authentication status.
-    var authenticatedDeferred = $q.defer();
+
+    // Inserts a pause into a promise chain if the debug config requires it.
+    function pauseIfDebugging(value) {
+      var delay = user.debug.delay;
+      if (delay) {
+        $log.debug('Delayng for ' + delay + ' msec.');
+        return $timeout(function() {
+          return value;
+  ***REMOVED*** delay);
+***REMOVED*** else {
+        return value;
+***REMOVED***
+    }
 
     // Sets the user's data and meta data, for social login
     // Returns true if the user is authenticated.
@@ -117,16 +129,9 @@ angular.module('koast-user', [])
 
       // First get the current user data from the server.
       return $http.get(url || koastOauth.makeRequestURL('/auth/user'))
+        .then(pauseIfDebugging)
         .then(setUser)
-        .then(callRegistrationHandler)
-        .then(function(isAuthenticated) {
-          user.isReady = true;
-          if (isAuthenticated) {
-            authenticatedDeferred.resolve();
-  ***REMOVED***
-          return isAuthenticated;
-***REMOVED***)
-        .then(null, $log.error);
+        .then(callRegistrationHandler);
     }
 
     // Initiates the login process.
@@ -176,7 +181,8 @@ angular.module('koast-user', [])
 
     // Checks if a username is available.
     user.checkUsernameAvailability = function (username) {
-      return $http.get(koastOauth.makeRequestURL('/auth/usernameAvailable'), {
+      var url = koastOauth.makeRequestURL('/auth/usernameAvailable');
+      return $http.get(url, {
         params: {
           username: username
 ***REMOVED***
@@ -209,8 +215,11 @@ angular.module('koast-user', [])
       return statusPromise;
 ***REMOVED***
 
+    user.whenStatusIsKnown = user.getStatusPromise;
+
     // Initializes the user service.
     user.init = function (options) {
+      user.debug = options.debug || {};
       koastOauth.setBaseUrl(options.baseUrl);
       return user.getStatusPromise();
 ***REMOVED***
