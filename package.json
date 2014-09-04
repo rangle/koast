@@ -1,6 +1,6 @@
 {
   "name": "koast",
-  "version": "0.2.0",
+  "version": "0.1.12",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
@@ -22,31 +22,33 @@
   "author": "Rangle.io",
   "license": "MIT",
   "dependencies": {
-    "underscore": "~1.5.2",
-    "q": "~1.0.0",
-    "express": "~3.4.8",
-    "chai": "~1.9.0",
-    "winston": "~0.7.2",
-    "mongoose": "~3.8.6",
     "async": "~0.2.10",
-    "less-middleware": "~0.1.15",
-    "optimist": "~0.6.0",
     "aws-sdk": "~2.0.0-rc10",
-    "crypto": "0.0.3",
-    "connect-mongo": "~0.4.0",
-    "passport-facebook": "~1.0.3",
-    "passport-twitter": "~1.0.2",
-    "passport-google-oauth": "~0.1.5",
-    "passport": "~0.2.0",
     "bcrypt": "~0.7.7",
+    "chai": "~1.9.0",
+    "connect-mongo": "~0.4.0",
+    "crypto": "0.0.3",
+    "express": "~3.4.8",
+    "express-jwt": "^0.3.1",
+    "jsonwebtoken": "^1.1.0",
+    "less-middleware": "~0.1.15",
+    "mongoose": "~3.8.6",
+    "nodemailer": "^0.6.3",
+    "optimist": "~0.6.0",
+    "passport": "~0.2.0",
+    "passport-facebook": "~1.0.3",
+    "passport-google-oauth": "~0.1.5",
     "passport-local": "~1.0.0",
-    "nodemailer": "^0.6.3"
+    "passport-twitter": "~1.0.2",
+    "q": "~1.0.0",
+    "underscore": "~1.5.2",
+    "winston": "~0.7.2"
   },
   "devDependencies": {
     "gulp": "~3.6.0",
     "mockery": "^1.4.0",
     "rangle-gulp": "~0.0.5",
-    "sinon": "^1.9.1",
+    "sinon": "^1.10.3",
     "sinon-chai": "^2.5.0"
   }
 }

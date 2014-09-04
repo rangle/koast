@@ -1,13 +1,18 @@
 /* global angular */
 
-angular.module('koast-user', [])
+angular.module('koast-user', [
+  'koast.logger',
+  'koast.http'
+])
 
 // Abstracts out some OAuth-specific logic.
-.factory('_koastOauth', ['$window', '$location', '$log',
-  function ($window, $location, $log) {
+.factory('_koastOauth', ['$window', '$location', '$log', '_koastLogger',
+  function ($window, $location, $log, _koastLogger) {
     'use strict';
 
     var service = {};
+
+    var log = _koastLogger;
 
     // This is only a default value, the Koast client must set baseUrl via Koast.init()
     // if the client is served on a different server than that of the API server.
@@ -44,9 +49,12 @@ angular.module('koast-user', [])
 ])
 
 // A service that represents the logged in user.
-.factory('_koastUser', ['_koastOauth', '$log', '$timeout', '$http', '$window', '$q',
-  function (koastOauth, $log, $timeout, $http, $window, $q) {
+.factory('_koastUser', ['_koastOauth', '_koastHttp', '_koastLogger', '$log', '$timeout', '$http', '$window', '$q',
+  function (koastOauth, _koastHttp, _koastLogger, $log, $timeout, $http, $window, $q) {
     'use strict';
+
+    var log = _koastLogger.makeLogger('koast.user');
+    var koastHttp = _koastHttp;
 
     // This is our service, which is an object that represents the user. The
     // app should be able to just add this to the scope.
@@ -74,31 +82,32 @@ angular.module('koast-user', [])
 
     // Sets the user's data and meta data, for social login
     // Returns true if the user is authenticated.
-    function setUser(response) {
-      var newUser = response.data;
-      // Figure out if the user is signed in. If so, update user.data and
-      // user.meta.
-      if (newUser.isAuthenticated) {
-        user.data = newUser.data;
-        user.meta = newUser.meta;
-        authenticatedDeferred.resolve();
-***REMOVED***
-      user.isAuthenticated = newUser.isAuthenticated;
-      return newUser.isAuthenticated;
-    }
-
-    // Sets the user's data and meta data, for local login
-    // Returns true if the user is authenticated.
-    function setUserForLocal(response) {
-      if (response.data && response.data.username) {
-        user.data = response.data;
-        user.isAuthenticated = true;
-        authenticatedDeferred.resolve();
-        user.meta = response.meta;
-***REMOVED*** else {
+    function setUser(responseBody) {
+      var valid = responseBody && responseBody.data;
+      var newUser;
+      log.debug('Setting the user based on', responseBody.data);
+      if (!valid) {
+        log.warn('Did not get back a valid user record.', responseBody);
         user.data = {};
         user.isAuthenticated = false;
+        user.meta = {};
+***REMOVED*** else {
+        // Figure out if the user is signed in. If so, update user.data and
+        // user.meta.
+        if (responseBody.isAuthenticated) {
+          user.data = responseBody.data;
+          user.meta = responseBody.meta;
+          log.debug('responseBody', responseBody);
+          if (user.meta.token) {
+            koastHttp.saveToken({
+              token: user.meta.token,
+              expires: user.meta.expires
+        ***REMOVED***
+  ***REMOVED***
 ***REMOVED***
+        user.isAuthenticated = responseBody.isAuthenticated;
+***REMOVED***
+      log.debug('user after setting', user);
       return user.isAuthenticated;
     }
 
@@ -128,7 +137,14 @@ angular.module('koast-user', [])
     function getUserData(url) {
 
       // First get the current user data from the server.
-      return $http.get(url || koastOauth.makeRequestURL('/auth/user'))
+      return koastHttp.get(url || '/auth/user')
+        .then(null, function(response) {
+          if (response.status===401) {
+            return null;
+  ***REMOVED*** else {
+            throw response;
+  ***REMOVED***
+***REMOVED***)
         .then(pauseIfDebugging)
         .then(setUser)
         .then(callRegistrationHandler);
@@ -141,6 +157,7 @@ angular.module('koast-user', [])
     
     // Posts a logout request.
     user.logout = function (nextUrl) {
+      koastHttp.deleteToken();
       return $http.post(koastOauth.makeRequestURL('/auth/logout'))
         .then(function (response) {
           if (response.data !== 'Ok') {
@@ -163,7 +180,11 @@ angular.module('koast-user', [])
         password: user.password
 ***REMOVED***;
       return $http.post(koastOauth.makeRequestURL('/auth/login'), body)
-        .then(setUserForLocal);
+        .then(function(response) {
+          log.debug('loginLocal:', response);
+          return response.data;
+***REMOVED***)
+        .then(setUser);
 ***REMOVED***
 
     // Registers the user (social login)
@@ -219,7 +240,9 @@ angular.module('koast-user', [])
 
     // Initializes the user service.
     user.init = function (options) {
-      user.debug = options.debug || {};
+      options.debug = options.debug || {};
+      user.debug = options.debug;
+      koastHttp.setOptions(options);
       koastOauth.setBaseUrl(options.baseUrl);
       return user.getStatusPromise();
 ***REMOVED***

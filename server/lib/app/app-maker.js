@@ -93,8 +93,8 @@ exports.makeExpressApp = function () {
   // Use body parser.
   app.use(express.bodyParser());
 
-  // Add handling of sessions.
-  authentication.addSessionHandling(app);
+  // Add handling of sessions
+  authentication.addAuthMaintenance(app);
 
   // Enable LESS.
   if (appConfig.lessPaths) {
@@ -113,7 +113,7 @@ exports.makeExpressApp = function () {
   if (appConfig.routes) {
     log.verbose('Adding routes.');
     appConfig.routes.forEach(function (routeConfig) {
-      log.verbose('  Mounting %s route on %s.', routeConfig.type,
+      log.verbose('    Mounting %s route on %s.', routeConfig.type,
         routeConfig.route);
 
       if (routeConfig.route[0] !== '/') {

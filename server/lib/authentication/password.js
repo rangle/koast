@@ -1,11 +1,8 @@
 /* globals require, exports */
 'use strict';
 
-// This is tentative (untested) implementation of password authentication.
-
 // Includes password reset, change password given token
-// Depends on config/<env>/mailer-reset.json and config/<env>/mailer-passwordchanged.json
-
+// Depends on config/<env>/mailer-reset.json and config/<env>/mailer-password-changed.json
 
 var passport = require('passport');
 var bcrypt = require('bcrypt');
@@ -19,6 +16,54 @@ var crypto = require('crypto');
 var mailerMaker = require('../mailer').mailerMaker;
 var authentication = require('./authentication');
 
+var SALT_WORK_FACTOR = 10;
+
+/**
+ * Give a user object and password, save the user to the database
+ * with an encryped password.
+ *
+ * Returns a promise which will be resolved if the user was succesfully saved
+ * or rejected if an error occured.
+ *
+ * @param {Object} user
+ * @param {String} password
+ */
+
+exports.saveUser = function(user, password) {
+  var deferred = Q.defer();
+
+  // Encrypt the password
+  SALT_WORK_FACTOR = 10;
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    if (err) {
+      log.error('Could not generate salt.');
+      return deferred.reject(err);
+    }
+
+    // Hash the password using our new salt
+    bcrypt.hash(password, salt, function(err, hash) {
+      if (err) {
+        log.error('Could not hash password');
+        return deferred.reject(err);
+***REMOVED***
+
+      user.password = hash;
+
+      // Save the user
+      user.save(function(err, user) {
+        if (user) {
+          log.verbose(user.username + ' was saved to the database');
+          deferred.resolve(user);
+***REMOVED*** else if (err) {
+          return deferred.reject(err);
+***REMOVED***
+  ***REMOVED***
+
+***REMOVED***
+***REMOVED***
+
+  return deferred.promise;
+};
 
 function comparePasswords(password1, password2) {
   var deferred = Q.defer();
@@ -100,23 +145,11 @@ exports.setup = function(app, users, config) {
   passport.use(strategy);
   // Setup a route using that strategy
   app.post('/auth/login', function(req, res, next) {
-    console.log('/auth/login', req.query.username);
     passport.authenticate('local', function(err, user, info) {
       if (err) {
-        console.log(err);
         return next(err);
 ***REMOVED***
-      if (!user) {
-        req.logout();
-        res.send(422, 'Wrong password or no such user.');
-***REMOVED*** else {
-        req.login(user, function(err) {
-          if (err) {
-            return next(err);
-  ***REMOVED***
-          return res.send(200, user);
-    ***REMOVED***
-***REMOVED***
+      config.callback(user, req, res, next);
     })(req, res, next);
 ***REMOVED***
 
@@ -209,12 +242,12 @@ exports.setup = function(app, users, config) {
       function(done) {
         _findUserWithToken(req.params.token, function(err, user) {
           if (!user) {
-            return res.send(422, 'Password reset token is invalid or has expired.');
+            return res.send(401, 'Password reset token is invalid or has expired.');
   ***REMOVED***
 
           user.resetPasswordToken = undefined;
           user.resetPasswordExpires = undefined;
-          authentication.saveUser(user, req.body.password)
+          exports.saveUser(user, req.body.password)
             .then(function(userResult) {
               done(null, userResult);
       ***REMOVED*** function(err) {
