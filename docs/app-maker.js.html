@@ -1,4 +1,31 @@
-/* global require, exports, __dirname */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/app/app-maker.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/app/app-maker.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* global require, exports, __dirname */
 
 'use strict';
 
@@ -6,7 +33,6 @@
 var fs = require('fs');
 var Q = require('q');
 ***REMOVED***
-var _ = require('underscore');
 
 var log = require('../log');
 var authentication = require('../authentication/authentication');
@@ -21,60 +47,34 @@ function assertSubrouteField (subroute, fieldName) {
 
 function mountApiSubroute (app, routeConfig, module, subroute) {
   var path;
-  var authFunction = subroute.authorization || module.defaults.authorization;
-  var authorizationMiddleware;
-  var handler = subroute.handler;
-  var methods;
+  var authFunction;
   assertSubrouteField(subroute, 'method');
   assertSubrouteField(subroute, 'route');
   assertSubrouteField(subroute, 'handler');
 
   path = routeConfig.route + '/' + subroute.route;
 
-  log.verbose('    Subroute:', subroute.method, path);
+  log.verbose('      Endpoint:', subroute.method, path);
 
   if (path.search('//') > 0) {
     log.warn('API endpoint path contains a double slash:', path);
   }
 
-  // Figure out if we are mapping a single method or multiple methods.
-  if (typeof subroute.method === 'string') {
-    methods = [subroute.method];
-  } else if (_.isArray(subroute.method)) {
-    methods = subroute.method;
-  } else {
-    throw new Error('Field "method" should be set either set either to a method name or an array of method names.');
-  }
+  authFunction = subroute.authorization || module.defaults.authorization;
 
-  // Prepare the authorization middleware.
-  authorizationMiddleware = function (req, res, next) {
+  app[subroute.method](path, function (req, res, next) {  
     var authDecision = authFunction(req, res);
     if (authDecision!==true) {
       res.setHeader('Content-Type', 'application/json');
       res.send(401, {
-        errorCode: 'not-authorized',
-        displayMessage: 'Not authorized'
+        errorCode: 'failed-auth-no-token',
+        displayMessage: 'Please provide a valid authentication token'
   ***REMOVED***
     } else {
       next();      
-***REMOVED***
-  };
-
-  // Now let's iterate over the different methods.
-  methods.forEach(function(method) {
-    // First, add an authorization middlware for this route.
-    app[method](path, authorizationMiddleware);
-    // Then add the actual handler. A handler is normally just a connect
-    // middleware function. But it can alternatively be a function that
-    // generates a middleware. If so, we'll need to get the actual handler by
-    // calling it.
-    if (subroute.handler.isMiddlewareFactory) {
-      handler = subroute.handler({method: method***REMOVED***
-    } else {
-      handler = subroute.handler;
     }
-    app[method](path, handler);
 ***REMOVED***
+  app[subroute.method](path, subroute.handler);
 }
 
 function mountApiModule(app, routeConfig, module) {
@@ -123,14 +123,14 @@ exports.makeExpressApp = function () {
   // Use body parser.
   app.use(express.bodyParser());
 
-  // Add handling of sessions
-  authentication.addAuthMaintenance(app);
+  // Add handling of sessions.
+  authentication.addSessionHandling(app);
 
   // Enable LESS.
   if (appConfig.lessPaths) {
     var lessMiddleware = require('less-middleware');
     appConfig.lessPaths.forEach(function (pathConfig) {
-      // pathConfig should be an array [<mountMount>, <path>].
+      // pathConfig should be an array [&lt;mountMount>, &lt;path>].
       log.verbose('Enabling LESS conversion for %s mounted at %s.',
         pathConfig[1], pathConfig[0]);
       app.use(pathConfig[0], lessMiddleware({
@@ -141,7 +141,7 @@ exports.makeExpressApp = function () {
 
   // Setting up top level routes
   if (appConfig.routes) {
-    log.verbose('Adding routes:');
+    log.verbose('Adding routes.');
     appConfig.routes.forEach(function (routeConfig) {
       log.verbose('  Mounting %s route on %s.', routeConfig.type,
         routeConfig.route);
@@ -196,3 +196,26 @@ exports.makeExpressApp = function () {
   log.verbose('Resolving the app');
   return app;
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="db-utils.html">lib/database/db-utils</a></li></ul><h3>Namespaces</h3><ul><li><a href="koast.html">koast</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_">_</a></li><li><a href="global.html#addAuthenticationRoutes">addAuthenticationRoutes</a></li><li><a href="global.html#addSessionHandling">addSessionHandling</a></li><li><a href="global.html#makeExpressApp">makeExpressApp</a></li><li><a href="global.html#makeMapper">makeMapper</a></li><li><a href="global.html#setErrorHandler">setErrorHandler</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sun Sep 07 2014 04:28:10 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

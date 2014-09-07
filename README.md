@@ -78,3 +78,9 @@ For bower.json:
       "koast": "https://github.com/<someuser>/koast.git#<sometag>,
       ...
     }
+
+# TODO
+
+- Link documentation in individual files to module that eventually exposes it
+  as an API (until then the JSDoc comments will *NOT be DRY*)
+- Finish the documentation
