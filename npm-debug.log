@@ -1,0 +1,24 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/rafy/.nvm/v0.10.26/bin/node',
+1 verbose cli   '/Users/rafy/.nvm/v0.10.26/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--save-dev',
+1 verbose cli   'jsdoc' ]
+2 info using npm@1.4.3
+3 info using node@v0.10.26
+4 error Failed to parse json
+4 error Unexpected token }
+5 error File: /Users/rafy/Documents/rangle/koast/package.json
+6 error Failed to parse package.json data.
+6 error package.json must be actual JSON, not just JavaScript.
+6 error
+6 error This is not a bug in npm.
+6 error Tell the package author to fix their package.json file. JSON.parse
+7 error System Darwin 13.1.0
+8 error command "/Users/rafy/.nvm/v0.10.26/bin/node" "/Users/rafy/.nvm/v0.10.26/bin/npm" "install" "--save-dev" "jsdoc"
+9 error cwd /Users/rafy/Documents/rangle/koast
+10 error node -v v0.10.26
+11 error npm -v 1.4.3
+12 error file /Users/rafy/Documents/rangle/koast/package.json
+13 error code EJSONPARSE
+14 verbose exit [ 1, true ]
