@@ -40,10 +40,11 @@
     "passport": "~0.2.0",
     "bcrypt": "~0.7.7",
     "passport-local": "~1.0.0",
-    "nodemailer": "~0.6.3"
+    "nodemailer": "~0.6.3",
+    "rangle-gulp": "0.0.7"
   },
   "devDependencies": {
-    "gulp": "~3.6.0",
+    "gulp": "^3.8.7",
     "mockery": "^1.4.0",
     "rangle-gulp": "~0.0.5"
   }
