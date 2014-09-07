@@ -73,7 +73,6 @@ gulp.task('jsdoc', function() {
 ***REMOVED***
 
 gulp.task('jsdoc-watch', function() {
-  console.log('asd');
   gulp.watch(docGlobs, ['jsdoc']);
 ***REMOVED***
 
