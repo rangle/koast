@@ -139,13 +139,13 @@ angular.module('koast.logger', [])
 
       var service = {};
       service.levels = {
-        debug: 0,
-        verbose: 1,
-        info: 2,
-        warn: 3,
-        error: 4
+        debug: 1,
+        verbose: 2,
+        info: 3,
+        warn: 4,
+        error: 5
 ***REMOVED***;
-      var logLevel = 0;
+      var logLevel = 3;
       service.colors = {};
       service.setLogLevel = function(newLevel) {
         logLevel = newLevel;
@@ -182,6 +182,7 @@ angular.module('koast.logger', [])
 ***REMOVED***
 
       function makeLoggerFunction(options) {
+        options.level = service.levels[options.name];
         return function(groupOptions, args) {
           log(options, groupOptions, args);
 ***REMOVED***
@@ -189,22 +190,27 @@ angular.module('koast.logger', [])
 
       var logFunctions = {
         debug: makeLoggerFunction({
+          name: 'debug',
           color: 'gray',
           symbol: '✍'
 ***REMOVED***),
         verbose: makeLoggerFunction({
+          name: 'verbose',
           color: 'cyan',
           symbol: '☞'
 ***REMOVED***),
         info: makeLoggerFunction({
+          name: 'info',
           color: '#0074D9',
           symbol: '☞'
 ***REMOVED***),
         warn: makeLoggerFunction({
+          name: 'warn',
           color: 'orange',
           symbol: '⚐'
 ***REMOVED***),
         error: makeLoggerFunction({
+          name: 'error',
           color: 'red',
           symbol: '⚑'
 ***REMOVED***),
@@ -733,6 +739,7 @@ angular.module('koast-user', [
     // app should be able to just add this to the scope.
     var user = {
       isAuthenticated: false, // Whether the user is authenticated or anonymous.
+      isReady: false, // Whether the user's status is known.
       data: {}, // User data coming from the database or similar.
       meta: {} // Metadata: registration status, tokens, etc.
 ***REMOVED***
@@ -754,35 +761,34 @@ angular.module('koast-user', [
 ***REMOVED***
     }
 
-    // Sets the user's data and meta data, for social login
+    // Sets the user's data and meta data.
     // Returns true if the user is authenticated.
-    function setUser(response) {
-      var valid = response && response.data;
+    function setUser(responseBody) {
+      var valid = responseBody && responseBody.data;
       var newUser;
-      log.debug('Setting the user based on', valid, response);
+      log.debug('Setting the user based on', responseBody.data);
       if (!valid) {
-        log.warn('Did not get back a valid user record.', response);
+        log.warn('Did not get back a valid user record.', responseBody);
         user.data = {};
         user.isAuthenticated = false;
         user.meta = {};
 ***REMOVED*** else {
-        newUser = response;
         // Figure out if the user is signed in. If so, update user.data and
         // user.meta.
-        if (newUser.isAuthenticated) {
-          user.data = newUser.data;
-          user.meta = newUser.meta;
-          log.debug('newUser', newUser);
+        if (responseBody.isAuthenticated) {
+          user.data = responseBody.data;
+          user.meta = responseBody.meta;
           if (user.meta.token) {
             koastHttp.saveToken({
               token: user.meta.token,
               expires: user.meta.expires
         ***REMOVED***
   ***REMOVED***
+          authenticatedDeferred.resolve();
 ***REMOVED***
-        user.isAuthenticated = newUser.isAuthenticated;
+        user.isAuthenticated = responseBody.isAuthenticated;
 ***REMOVED***
-      log.debug('user after setting', user);
+      user.isReady = true;
       return user.isAuthenticated;
     }
 
@@ -822,15 +828,7 @@ angular.module('koast-user', [
 ***REMOVED***)
         .then(pauseIfDebugging)
         .then(setUser)
-        .then(callRegistrationHandler)
-        .then(function(isAuthenticated) {
-          user.isReady = true;
-          if (isAuthenticated) {
-            authenticatedDeferred.resolve();
-  ***REMOVED***
-          return isAuthenticated;
-***REMOVED***)
-        .then(null, $log.error);
+        .then(callRegistrationHandler);
     }
 
     // Initiates the login process.
@@ -863,6 +861,10 @@ angular.module('koast-user', [
         password: user.password
 ***REMOVED***;
       return $http.post(koastOauth.makeRequestURL('/auth/login'), body)
+        .then(function(response) {
+          log.debug('loginLocal:', response);
+          return response.data;
+***REMOVED***)
         .then(setUser);
 ***REMOVED***
 

@@ -13,6 +13,7 @@ var expressJwt = require('express-jwt');
 
 ***REMOVED***
 var log = require('../log');
+var dbUtils = require('../database/db-utils');
 
 // Adds the handling of Json Web Tokens. If a request comes with a JWT, we set
 // the user accordingly. Improper or expired JWT results in a 401. If no JWT
@@ -86,7 +87,7 @@ exports.addAuthMaintenance = function(app) {
   } else if (authConfig.maintenance==='token') {
     addJwtHandling(app);
   } else {
-    logger.warn('Invalid "maintenance" option in authentication configuration:',
+    log.warn('Invalid "maintenance" option in authentication configuration:',
       authConfig.maintenance, '(Valid options: "cookie", "token".)');
   }
 };

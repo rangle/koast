@@ -127,6 +127,8 @@ angular.module('sampleKoastClientApp', ['koast'])
       siteTitle: 'App Awesome'
 ***REMOVED***
     koast.setApiUriPrefix('http://localkoast.rangle.io:3000/api/');
-    koast.addEndpoint('robots', ':robotNumber');
+    koast.addEndpoint('robots', ':robotNumber', {
+      useEnvelope: true
+***REMOVED***
   }
 ]);

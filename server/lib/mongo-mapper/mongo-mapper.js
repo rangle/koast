@@ -8,6 +8,7 @@
 
 var _ = require('underscore');
 var log = require('../log');
+var dbUtils = require('../database/db-utils');
 
 var handlerFactories = {};
 
@@ -155,15 +156,33 @@ handlerFactories.del = function (options) {
   };
 };
 
+// Makes a handler factory that will later create a handler based on provided
+// configurations. This is to allow us to configure several methods for the
+// same endpoint.
+handlerFactories.auto = function(options) {
+  // We'll be returning a function that will take an endpoint configuration.
+  // When this function is called and provided with the config, we'll look
+  // into this config to figure out which handler factory to use and call it
+  // with the original options.
+  var factoryFunction = function(config) {
+    var method = config.method;
+    return handlerFactories[method](options);
+  };
+  factoryFunction.isMiddlewareFactory = true;
+  return factoryFunction;
+};
+
 /**
  * Creates a set of factories, which can then be used to create request
  * handlers.
  *
- * @param  {Object} dbConnection   A mongoose database connection.
+ * @param  {Object} dbConnection   A mongoose database connection (ot)
  * @return {Object}                An object offering handler factory methods.
  */
 exports.makeMapper = function (dbConnection) {
   var service = {};
+
+  dbConnection = dbConnection || dbUtils.getConnectionNow();
 
   service.options = {
     useEnvelope: true
@@ -175,7 +194,7 @@ exports.makeMapper = function (dbConnection) {
   };
   service.options.annotator = function () {}; // The default is to do nothing.
 
-  ['get', 'post', 'put', 'del'].forEach(function (method) {
+  ['get', 'post', 'put', 'del', 'auto'].forEach(function (method) {
     service[method] = function (arg) {
       var model;
       var handlerFactory;
@@ -201,3 +220,4 @@ exports.makeMapper = function (dbConnection) {
 
   return service;
 };
+

@@ -1,6 +1,6 @@
 <html ng-app="sampleKoastClientApp">
   <head>
-    <script src="/bower/angular/angular.min.js"></script>
+    <script src="/bower/angular/angular.js"></script>
   </head>
 
   <body>
@@ -8,6 +8,7 @@
     <div ng-controller="myCtrl">
       <div ng-cloak>Signed in? {{ user.isAuthenticated}}</div>
       <div ng-show="user.isReady">
+        Hello
         <div ng-hide="user.isAuthenticated">
           <button ng-click="login('facebook')">Sign in with Facebook</button>
         </div>
@@ -44,8 +45,15 @@
       <button ng-click="createRobot()">Create a new robot</button>
     </div>
 
-    <script src="/bower/underscore/underscore-min.js"></script>
+    <script src="/bower/lodash/dist/lodash.js"></script>
     <script src="/bower/koast/client/dist/koast.js"></script>
+    <!-- Or import individual scripts for easier debugging.
+      <script src="/bower/koast/client/src/logger.js"></script>
+      <script src="/bower/koast/client/src/resource.js"></script>
+      <script src="/bower/koast/client/src/user.js"></script>
+      <script src="/bower/koast/client/src/http.js"></script>
+      <script src="/bower/koast/client/src/koast.js"></script>
+     -->
     <script src="/app/app.js"></script>
   </body>
 </html>

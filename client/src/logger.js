@@ -7,13 +7,13 @@ angular.module('koast.logger', [])
 
       var service = {};
       service.levels = {
-        debug: 0,
-        verbose: 1,
-        info: 2,
-        warn: 3,
-        error: 4
+        debug: 1,
+        verbose: 2,
+        info: 3,
+        warn: 4,
+        error: 5
 ***REMOVED***;
-      var logLevel = 0;
+      var logLevel = 3;
       service.colors = {};
       service.setLogLevel = function(newLevel) {
         logLevel = newLevel;
@@ -50,6 +50,7 @@ angular.module('koast.logger', [])
 ***REMOVED***
 
       function makeLoggerFunction(options) {
+        options.level = service.levels[options.name];
         return function(groupOptions, args) {
           log(options, groupOptions, args);
 ***REMOVED***
@@ -57,22 +58,27 @@ angular.module('koast.logger', [])
 
       var logFunctions = {
         debug: makeLoggerFunction({
+          name: 'debug',
           color: 'gray',
           symbol: '✍'
 ***REMOVED***),
         verbose: makeLoggerFunction({
+          name: 'verbose',
           color: 'cyan',
           symbol: '☞'
 ***REMOVED***),
         info: makeLoggerFunction({
+          name: 'info',
           color: '#0074D9',
           symbol: '☞'
 ***REMOVED***),
         warn: makeLoggerFunction({
+          name: 'warn',
           color: 'orange',
           symbol: '⚐'
 ***REMOVED***),
         error: makeLoggerFunction({
+          name: 'error',
           color: 'red',
           symbol: '⚑'
 ***REMOVED***),

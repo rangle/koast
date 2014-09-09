@@ -60,12 +60,14 @@ angular.module('koast-user', [
     // app should be able to just add this to the scope.
     var user = {
       isAuthenticated: false, // Whether the user is authenticated or anonymous.
+      isReady: false, // Whether the user's status is known.
       data: {}, // User data coming from the database or similar.
       meta: {} // Metadata: registration status, tokens, etc.
 ***REMOVED***
 
     var registrationHandler; // An optional callback for registering an new user.
     var statusPromise; // A promise resolving to user's authentication status.
+    var authenticatedDeferred = $q.defer();
 
     // Inserts a pause into a promise chain if the debug config requires it.
     function pauseIfDebugging(value) {
@@ -80,7 +82,7 @@ angular.module('koast-user', [
 ***REMOVED***
     }
 
-    // Sets the user's data and meta data, for social login
+    // Sets the user's data and meta data.
     // Returns true if the user is authenticated.
     function setUser(responseBody) {
       var valid = responseBody && responseBody.data;
@@ -97,17 +99,17 @@ angular.module('koast-user', [
         if (responseBody.isAuthenticated) {
           user.data = responseBody.data;
           user.meta = responseBody.meta;
-          log.debug('responseBody', responseBody);
           if (user.meta.token) {
             koastHttp.saveToken({
               token: user.meta.token,
               expires: user.meta.expires
         ***REMOVED***
   ***REMOVED***
+          authenticatedDeferred.resolve();
 ***REMOVED***
         user.isAuthenticated = responseBody.isAuthenticated;
 ***REMOVED***
-      log.debug('user after setting', user);
+      user.isReady = true;
       return user.isAuthenticated;
     }
 
