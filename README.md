@@ -55,6 +55,11 @@ The recommended application setup:
     
 See `examples/basic-express/` for an example.
 
+# Documentation
+
+Generate the documentation with `gulp jsdoc`, the output will be in docs/html.
+You can also generate the documentation on watch with `gulp jsdoc-watch`
+
 # Deployment
 
 See docs/heroku.md for heroku deployment procedure.
@@ -79,8 +84,3 @@ For bower.json:
       ...
     }
 
-# TODO
-
-- Link documentation in individual files to module that eventually exposes it
-  as an API (until then the JSDoc comments will *NOT be DRY*)
-- Finish the documentation
