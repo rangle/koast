@@ -25,5 +25,14 @@ describe('Test basic config loading.', function() {
     expect(fooConfig).to.not.be.undefined;
     expect(fooConfig.env).to.equal('staging');
 ***REMOVED***
+
+  it('Should contain common config bar and overwrite foo', function() {
+    config.setEnvironment('local', {force: true***REMOVED***
+    var fooConfig = config.getConfig('foo');
+    expect(fooConfig).to.not.be.undefined;
+    expect(fooConfig.foo).to.equal(42);
+    expect(fooConfig.bar).to.equal(1337);
+    expect(fooConfig.env).to.equal('local');
+***REMOVED***
 ***REMOVED***
 

@@ -28,16 +28,50 @@ function getFullConfigFilePath(subpath) {
   return (configDirectory || 'config') + '/' + environment + '/' + subpath;
 }
 
-function readJsonFromFile(subpath) {
-  var fullPath = getFullConfigFilePath(subpath);
+function getFullCommonConfigFilePath(subpath) {
+  /*jshint expr:true */
+  demandEnvironment();
+  expect(subpath).to.not.be.undefined;
+  return (configDirectory || 'config') + '/' + commonConfigDir +
+    '/' + subpath;
+
+}
+
+function readJsonFromFile(fullPath) {
   if (fs.existsSync(fullPath)) {
     return JSON.parse(fs.readFileSync(fullPath));
   }
 }
 
-function loadCommonConfig() {
-
+function loadEnvConfig(key) {
+  var fullPath = getFullConfigFilePath(key + '.json');
+  return readJsonFromFile(fullPath);
 }
+
+// Loads common configuration files into cache
+function loadCommonConfig(key) {
+  var fullPath = getFullCommonConfigFilePath(key + '.json');
+  return readJsonFromFile(fullPath);
+}
+
+function combineConfig(env, common) {
+  // Overwrite common properties with env properties, add env to common too
+  for(var prop in env) {
+    //this check isn't necessary when reading from file
+    if(env.hasOwnProperty(prop)) { 
+      common[prop] = env[prop];
+    }
+  }
+
+  return common;
+}
+
+function loadConfig(key) {
+  var commonConfig = loadCommonConfig(key) || {};
+  var envConfig = loadEnvConfig(key) || {};
+  return combineConfig(loadEnvConfig(key), commonConfig);
+}
+
 
 /**
  * Somebody please explain what this does.
@@ -59,6 +93,7 @@ exports.setEnvironment = function (newEnvironment, options) {
   }
   cachedConfigs = {};
 };
+
 
 /**
  * Set base path for config directory.
@@ -85,11 +120,15 @@ exports.setConfigDirectory = function (newConfigDirectory, options) {
  *                                 directly from disk.
  */
 exports.getConfig = function (key, ignoreCache) {
+  var commonConfig;
 
   if (ignoreCache){
-    return readJsonFromFile(key + '.json');
+    // Combine with commons
+    return loadConfig(key);
   }
 
-  cachedConfigs[key] = cachedConfigs[key] || readJsonFromFile(key + '.json');
+  cachedConfigs[key] = cachedConfigs[key] || loadConfig(key);
   return cachedConfigs[key];
 };
+
+
