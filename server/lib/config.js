@@ -12,6 +12,9 @@ var environment;
 var configDirectory;
 var cachedConfigs = {};
 
+var commonConfigDir = 'common'; //TODO ability to set this
+var commonConfig = {};
+
 function demandEnvironment() {
   if (!environment) {
     throw 'Environment is not set.';
@@ -32,6 +35,10 @@ function readJsonFromFile(subpath) {
   }
 }
 
+function loadCommonConfig() {
+
+}
+
 /**
  * Somebody please explain what this does.
  * @function setEnvironment
@@ -48,6 +55,7 @@ exports.setEnvironment = function (newEnvironment, options) {
       newEnvironment = process.env.NODE_ENV || 'local';
     }
     environment = newEnvironment;
+    loadCommonConfig();
   }
   cachedConfigs = {};
 };
@@ -73,6 +81,8 @@ exports.setConfigDirectory = function (newConfigDirectory, options) {
  * @function getConfig
  * @memberof koast
  * @param  {String}  key  Name of configuration you want.
+ * @param  {boolean}  ignoreCache  Skip the cache and load the configuration
+ *                                 directly from disk.
  */
 exports.getConfig = function (key, ignoreCache) {
 

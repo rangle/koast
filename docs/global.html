@@ -242,7 +242,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="authentication.js.html">lib/authentication/authentication.js</a>, <a href="authentication.js.html#line56">line 56</a>
+        <a href="authentication.js.html">lib/authentication/authentication.js</a>, <a href="authentication.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -272,7 +272,7 @@
         
             
 <dt>
-    <h4 class="name" id="addSessionHandling"><span class="type-signature"></span>addSessionHandling<span class="signature">(app)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addAuthMaintenance"><span class="type-signature"></span>addAuthMaintenance<span class="signature">(app)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -280,7 +280,8 @@
 
     
     <div class="description">
-        Sets up session handling for the app.
+        Adds authentication maintenance middleware, either using cookies or JTW
+tokens.
     </div>
     
 
@@ -330,7 +331,7 @@
 
             
 
-            <td class="description last">An express app.</td>
+            <td class="description last">The express app.</td>
         </tr>
 
     
@@ -361,7 +362,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="authentication.js.html">lib/authentication/authentication.js</a>, <a href="authentication.js.html#line26">line 26</a>
+        <a href="maintenance.js.html">lib/authentication/maintenance.js</a>, <a href="maintenance.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -492,7 +493,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="app-maker.js.html">lib/app/app-maker.js</a>, <a href="app-maker.js.html#line77">line 77</a>
+        <a href="app-maker.js.html">lib/app/app-maker.js</a>, <a href="app-maker.js.html#line104">line 104</a>
     </li></ul></dd>
     
 
@@ -581,7 +582,7 @@ handlers.
 
             
 
-            <td class="description last">A mongoose database connection.</td>
+            <td class="description last">A mongoose database connection (ot)</td>
         </tr>
 
     
@@ -612,7 +613,7 @@ handlers.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mongo-mapper.js.html">lib/mongo-mapper/mongo-mapper.js</a>, <a href="mongo-mapper.js.html#line167">line 167</a>
+        <a href="mongo-mapper.js.html">lib/mongo-mapper/mongo-mapper.js</a>, <a href="mongo-mapper.js.html#line182">line 182</a>
     </li></ul></dd>
     
 
@@ -657,6 +658,152 @@ handlers.
 </dl>
 
         
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="saveUser"><span class="type-signature"></span>saveUser<span class="signature">(user, password)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Give a user object and password, save the user to the database
+with an encryped password.
+
+Returns a promise which will be resolved if the user was succesfully saved
+or rejected if an error occured.
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="password.js.html">lib/authentication/password.js</a>, <a href="password.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -753,7 +900,7 @@ handlers.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mongo-mapper.js.html">lib/mongo-mapper/mongo-mapper.js</a>, <a href="mongo-mapper.js.html#line24">line 24</a>
+        <a href="mongo-mapper.js.html">lib/mongo-mapper/mongo-mapper.js</a>, <a href="mongo-mapper.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -796,13 +943,13 @@ handlers.
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="db-utils.html">lib/database/db-utils</a></li></ul><h3>Namespaces</h3><ul><li><a href="koast.html">koast</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_">_</a></li><li><a href="global.html#addAuthenticationRoutes">addAuthenticationRoutes</a></li><li><a href="global.html#addSessionHandling">addSessionHandling</a></li><li><a href="global.html#makeExpressApp">makeExpressApp</a></li><li><a href="global.html#makeMapper">makeMapper</a></li><li><a href="global.html#setErrorHandler">setErrorHandler</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="db-utils.html">lib/database/db-utils</a></li></ul><h3>Namespaces</h3><ul><li><a href="koast.html">koast</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_">_</a></li><li><a href="global.html#addAuthenticationRoutes">addAuthenticationRoutes</a></li><li><a href="global.html#addAuthMaintenance">addAuthMaintenance</a></li><li><a href="global.html#makeExpressApp">makeExpressApp</a></li><li><a href="global.html#makeMapper">makeMapper</a></li><li><a href="global.html#saveUser">saveUser</a></li><li><a href="global.html#setErrorHandler">setErrorHandler</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sun Sep 07 2014 04:28:10 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Tue Sep 09 2014 00:43:47 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
