@@ -2,9 +2,10 @@ var gulp = require('gulp');
 var rg = require('rangle-gulp');
 
 var karmaVendorFiles = [
-  'client/bower_components/angular/angular.min.js',
+  'client/bower_components/angular/angular.js',
   'client/bower_components/angular-mocks/angular-mocks.js',
-  'client/bower_components/sinon-chai/lib/sinon-chai.js'
+  'client/bower_components/sinon-chai/lib/sinon-chai.js',
+  'client/testing/lib/*.js'
 ];
 
 var karmaFiles = [

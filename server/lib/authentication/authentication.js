@@ -3,54 +3,22 @@
 'use strict';
 
 var _ = require('underscore');
-var passport = require('passport');
-***REMOVED***
-var connectMongo = require('connect-mongo');
-var MongoStore = connectMongo(express);
+var jwt = require('jsonwebtoken');
 
 ***REMOVED***
 var log = require('../log');
 var oauth = require('./oauth');
-var password = require('./password');
+var passwordAuth = require('./password');
+var authMaintenance = require('./maintenance');
 var util = require('../util/util');
 var dbUtils = require('../database/db-utils');
 
-var bcrypt = require('bcrypt'),
-    SALT_WORK_FACTOR = 10;
-
-
-/**
- * Sets up session handling for the app.
- * @param {Object} app             An express app.
- */
-exports.addSessionHandling = function (app) {
-  var connection = dbUtils.getConnectionNow();
-
-  var sessionStore = new MongoStore({
-    db: connection.db
-***REMOVED***
-
-  app.use(express.cookieParser()); //appConfig.authentication.cookieSecret));
-  app.use(express.session({
-    secret: '076ad5894a80f20e70b1e3ab0e4686b5',
-    maxAge: 3600000, // 1 hour
-    store: sessionStore
-  }));
-
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  passport.serializeUser(function (user, done) {
-    done(null, user);
-***REMOVED***
-
-  passport.deserializeUser(function (obj, done) {
-    done(null, obj);
-***REMOVED***
-};
+// Just re-export the method from the child module.
+exports.addAuthMaintenance = authMaintenance.addAuthMaintenance;
 
 /**
  * Adds routes for authentication and related things.
+ *
  * @param {Object} app             An express app.
  */
 exports.addAuthenticationRoutes = function (app) {
@@ -59,6 +27,7 @@ exports.addAuthenticationRoutes = function (app) {
   var connection = dbUtils.getConnectionNow();
   var providerAccounts = connection.model('userProviderAccounts');
   var users = connection.model('users');
+  var secrets = config.getConfig('secrets');
 
   // GET /auth/user - returns info about the logged in user, in an envelope.
   app.get('/auth/user', function (req, res) {
@@ -75,15 +44,14 @@ exports.addAuthenticationRoutes = function (app) {
     // Check if the user is actually logged in. We should try to update info
     // for an anonymous user.
     if (!(req.user && req.user.data)) {
-      log.error('no user or no user data');
-      res.send(500, 'Internal error');
+      res.send(401, 'Not authenticated');
       return;
     }
 
     // For right now, we do not allow the user to change their username if it
     // has been set before.
     if (req.user.username) {
-      res.send(401, 'You cannot change the user name of a registered user.');
+      res.send(422, 'You cannot change the user name of a registered user.');
       return;
     }
 
@@ -121,54 +89,45 @@ exports.addAuthenticationRoutes = function (app) {
   app.post('/auth/user', function (req, res) {
 
     if (!req.body.username || !req.body.password || !req.body.displayName || !req.body.email) {
-      res.send(401, 'You must provide username, email, and password');
+      res.send(422, 'You must provide username, email, and password');
       return;
     }
 
+    var user = new users(req.body);
+    // user.displayName = req.body.displayName;
+    // user.username = req.body.username;
+    // user.email = req.body.email;
+    // if(req.body.userdata_id) {
+    //   // This is a hack, needs to be removed. #todo
+    //   user.userdata_id = req.body.userdata_id;
+    // }
 
-    // Encrypt the password
-    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-      if (err) {
-        log.error('Could not generate salt.')
+    passwordAuth.saveUser(user, req.body.password)
+      .then(function(user) {
+        if (user) {
+          log.info('New user saved to the database:', user.username);
+          res.send(200, user);
+***REMOVED***
+***REMOVED*** function(err) {
+        if (err && err.code === 11000) {
+          // code 11000 is a mongoose code for duplicate key error
+          log.error('Could not save user. Is username and email unique? ' + err.message);
+          return res.send(422, 'Username already exists.');
+***REMOVED*** else {
+          throw err;
+***REMOVED***
+***REMOVED***)
+      .then(null, function(err) {
+        log.error(err.message);
         return res.send(500, 'Internal error');
-***REMOVED***
-
-      // hash the password using our new salt
-      bcrypt.hash(req.body.password, salt, function (err, hash) {
-        if (err) {
-          log.error('Could not hash password');
-          return res.send(500, 'Internal error');
-***REMOVED***
-
-        var user = new users();
-
-        user.displayName = req.body.displayName;
-        user.password = hash;
-        user.username = req.body.username;
-        user.email = req.body.email;
-
-        user.save(function (err, user) {
-          // code 11000 is a mongoose code duplicate key error
-          if (err && err.code === 11000) {
-            log.error('Could not save user, is username and email unique? ' + err.message);
-            return res.send(422, 'Username already exists.');
-  ***REMOVED*** else if (err){
-            log.error(err.message);
-            return res.send(500, 'Internal error');
   ***REMOVED***
-          if (user) {
-            log.verbose(user.username + ' was saved to the database');
-            res.send(200, user);
-  ***REMOVED***
-    ***REMOVED***
-
-  ***REMOVED***
-***REMOVED***
 ***REMOVED***
 
   // POST /auth/logout - logs out the user.
   app.post('/auth/logout', function (req, res) {
-    req.logout();
+    if (authMaintenance.usingSessions) {
+      req.logout();
+    }
     res.send(200, 'Ok');
 ***REMOVED***
 
@@ -199,9 +158,62 @@ exports.addAuthenticationRoutes = function (app) {
 ***REMOVED***
   }
 
+  function getExpirationTime(offsetInMinutes) {
+    var now = new Date();
+    now.setMinutes(now.getMinutes() + offsetInMinutes);
+    return now.toISOString();
+  }
+
+  function handleLogin(user, req, res, next) {
+    var token;
+    var profile;
+    var tokenExpiresInMinutes;
+    var envelope = {
+      data: user,
+      isAuthenticated: true,
+      meta: {}
+***REMOVED***
+
+    // First handle the case where the user was not logged in.
+    if (!user) {
+      if (authConfig.maintenance === 'cookie') {
+        req.logout();
+***REMOVED***
+      return res.send(401, 'Wrong password or no such user.');
+    }
+
+    // Now handle the case where we did get a user record.
+    if (authConfig.maintenance === 'token') {
+      // For token authentication we want to add a token.
+      profile = {
+        username: user.username,
+        email: user.email,
+        userdata_id: user.userdata_id
+***REMOVED***;
+      tokenExpiresInMinutes = authConfig.expiresInMinutes || 60;
+      envelope.meta.token = jwt.sign({data:profile}, secrets.authTokenSecret, {
+        expiresInMinutes: tokenExpiresInMinutes
+  ***REMOVED***
+      envelope.meta.expires = getExpirationTime(tokenExpiresInMinutes);
+      return res.send(200, envelope);
+    } else if (authConfig.maintenance === 'cookie') {
+      // For cookie authentication we want to login the user.
+      req.login(user, function(err) {
+        if (err) {
+          return next(err);
+***REMOVED*** else {
+          return res.send(200, envelope);
+***REMOVED***
+  ***REMOVED***
+    }
+  }
+
   // Configure password authentication if necessary.
-  log.verbose('Authentication strategy:', authConfig.strategy);
   if (authConfig.strategy === 'password') {
-    password.setup(app, users, {***REMOVED***
+    passwordAuth.setup(app, users, {
+      callback: handleLogin
+***REMOVED***
   }
 };
+
+exports.saveUser = passwordAuth.saveUser;

@@ -21,17 +21,28 @@ angular.module('koast-resource', ['koast-user'])
   function (KoastServerHelper, $q, $http, $log) {
     'use strict';
     // A client side representation of a saveable RESTful resource instance.
-    function Resource(endpoint, result) {
+    function Resource(endpoint, result, options) {
       var resource = this;
-      _.keys(result.data).forEach(function (key) {
-        resource[key] = result.data[key];
+      var data;
+      if (options.useEnvelope) {
+        data = result.data;
+        if (!data) {
+          throw new Error('Client expects an envelope, but server did not send it properly.');
+***REMOVED***
+***REMOVED*** else {
+        data = result;
+***REMOVED***
+      _.keys(data).forEach(function (key) {
+        resource[key] = data[key];
   ***REMOVED***
 
-      Object.defineProperty(this, 'can', {
-        get: function () {
-          return result.meta.can;
-***REMOVED***
+      if (options.useEnvelope) {
+        Object.defineProperty(this, 'can', {
+          get: function () {
+            return result.meta.can;
   ***REMOVED***
+    ***REMOVED***
+***REMOVED***
 
       Object.defineProperty(this, '_endpoint', {
         get: function () {
@@ -71,11 +82,12 @@ angular.module('koast-resource', ['koast-user'])
     'use strict';
 
     // The constructor.
-    function Endpoint(prefix, handle, template) {
+    function Endpoint(prefix, handle, template, options) {
       var endpoint = this;
       endpoint.prefix = prefix;
       endpoint.handle = handle;
       endpoint.template = template;
+      endpoint.options = _.clone(options);
     }
 
     // A method to generate the post url - that is, a URL that does not
@@ -120,54 +132,60 @@ angular.module('koast-resource', ['koast-user'])
   function (KoastResource, KoastServerHelper, KoastEndpoint, $http, $q, $log) {
     'use strict';
     var service = {};
-    var prefix;
+    var prefixes = {};
     var endpoints = {};
+
+    // Converts an array of raw results coming from the server into an array
+    // of resources. If options specify a singular resource, then we just
+    // return that resource.
+    function convertResultsToResources(results, options) {
+      var resources = _.map(results, function(rawResult) {
+        return new KoastResource(options.endpoint, rawResult, options);
+  ***REMOVED***
+
+      if (options.singular) {
+        if (resources.length === 0) {
+          resources = null;
+***REMOVED*** else if (resources.length > 1) {
+          $log.warn('Expected a singular resource, got ' + resources.length);
+          resources = resources[0];
+***REMOVED*** else {
+          resources = resources[0];
+***REMOVED***
+***REMOVED***
+      return resources;
+    }
 
     // An auxiliary function that actually gets the resource. This should work
     // for either a request to get a single item or a query for multiple.
-    function get(endpointHandle, params, query, options) {
-      var deferred = $q.defer();
+    function get(endpointHandle, params, query, resourceOptions) {
       var endpoint = endpoints[endpointHandle];
       var headers = {};
-
-      options = options || {};
+      var options = {};
+      var getConfig = {
+        params: query,
+        headers: headers
+***REMOVED***;
+      options = angular.extend(options, endpoint.options);
+      options = angular.extend(options, resourceOptions);
+      options.endpoint = endpoint;
       if (!endpoint) {
         throw new Error('Unknown endpoint: ' + endpointHandle);
 ***REMOVED***
 
       KoastServerHelper.addAuthHeaders(headers);
-
-      $http.get(endpoint.makeGetUrl(params), {
-        params: query,
-        headers: headers
-***REMOVED***)
-        .success(function (result) {
-          var resources = [];
-          result.forEach(function (result) {
-            var resource = new KoastResource(endpoint, result);
-            resources.push(resource);
-      ***REMOVED***
-
-          if (options.singular) {
-            if (resources.length === 0) {
-              return null;
-***REMOVED*** else if (resources.length > 1) {
-              $log.warn('Expected a singular resource, got ' + resources.length);
-***REMOVED***
-            deferred.resolve(resources[0]);
-  ***REMOVED*** else {
-            deferred.resolve(resources);
-  ***REMOVED***
-***REMOVED***)
-        .error(function (error) {
-          deferred.reject(error);
+      return $http.get(endpoint.makeGetUrl(params), getConfig)
+        .then(function (response) {
+          return convertResultsToResources(response.data, options);
     ***REMOVED***
-      return deferred.promise;
     }
 
-    // Sets the prefix for API URLs. For now we can only set one.
-    service.setApiUriPrefix = function (newPrefix) {
-      prefix = newPrefix;
+    // Sets the prefix for API URLs. The prefix can be optionally associated
+    // with a server handle. If no handle is specified, this method sets API
+    // URL prefix for the default server.
+    service.setApiUriPrefix = function (newPrefix, serverHandle) {
+      serverHandle = serverHandle || '_';
+      prefixes[serverHandle] = newPrefix;
 ***REMOVED***
 
     /**
@@ -215,10 +233,7 @@ angular.module('koast-resource', ['koast-user'])
 
     service.createResource = function (endpointHandle, body) {
       return post(endpointHandle, body)
-        .then(function(result) {
-          console.log(result);
-          return result;
-  ***REMOVED*** $log.error);
+        .then(null, $log.error);
 ***REMOVED***
 
     /**
@@ -234,8 +249,14 @@ angular.module('koast-resource', ['koast-user'])
       return get(endpointHandle, null, query);
 ***REMOVED***
 
-    service.addEndpoint = function (handle, template) {
-      var endpoint = new KoastEndpoint(prefix, handle, template);
+    service.addEndpoint = function (handle, template, options) {
+      options = options || {};
+      var serverHandle = options.server || '_';
+      var prefix = prefixes[serverHandle];
+      if (!prefix) {
+        throw new Error('No URI prefix defined for server ' + serverHandle);
+***REMOVED***
+      var endpoint = new KoastEndpoint(prefix, handle, template, options);
       if (endpoints[handle]) {
         throw new Error('An endpoint with this handle was already defined: ' +
           handle);

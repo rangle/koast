@@ -6,6 +6,7 @@
 var fs = require('fs');
 var Q = require('q');
 ***REMOVED***
+var _ = require('underscore');
 
 var log = require('../log');
 var authentication = require('../authentication/authentication');
@@ -20,34 +21,60 @@ function assertSubrouteField (subroute, fieldName) {
 
 function mountApiSubroute (app, routeConfig, module, subroute) {
   var path;
-  var authFunction;
+  var authFunction = subroute.authorization || module.defaults.authorization;
+  var authorizationMiddleware;
+  var handler = subroute.handler;
+  var methods;
   assertSubrouteField(subroute, 'method');
   assertSubrouteField(subroute, 'route');
   assertSubrouteField(subroute, 'handler');
 
   path = routeConfig.route + '/' + subroute.route;
 
-  log.verbose('      Endpoint:', subroute.method, path);
+  log.verbose('    Subroute:', subroute.method, path);
 
   if (path.search('//') > 0) {
     log.warn('API endpoint path contains a double slash:', path);
   }
 
-  authFunction = subroute.authorization || module.defaults.authorization;
+  // Figure out if we are mapping a single method or multiple methods.
+  if (typeof subroute.method === 'string') {
+    methods = [subroute.method];
+  } else if (_.isArray(subroute.method)) {
+    methods = subroute.method;
+  } else {
+    throw new Error('Field "method" should be set either set either to a method name or an array of method names.');
+  }
 
-  app[subroute.method](path, function (req, res, next) {  
+  // Prepare the authorization middleware.
+  authorizationMiddleware = function (req, res, next) {
     var authDecision = authFunction(req, res);
     if (authDecision!==true) {
       res.setHeader('Content-Type', 'application/json');
       res.send(401, {
-        errorCode: 'failed-auth-no-token',
-        displayMessage: 'Please provide a valid authentication token'
+        errorCode: 'not-authorized',
+        displayMessage: 'Not authorized'
   ***REMOVED***
     } else {
       next();      
-    }
 ***REMOVED***
-  app[subroute.method](path, subroute.handler);
+  };
+
+  // Now let's iterate over the different methods.
+  methods.forEach(function(method) {
+    // First, add an authorization middlware for this route.
+    app[method](path, authorizationMiddleware);
+    // Then add the actual handler. A handler is normally just a connect
+    // middleware function. But it can alternatively be a function that
+    // generates a middleware. If so, we'll need to get the actual handler by
+    // calling it.
+    if (subroute.handler.isMiddlewareFactory) {
+      handler = subroute.handler({method: method***REMOVED***
+    } else {
+      handler = subroute.handler;
+    }
+    app[method](path, handler);
+***REMOVED***
 }
 
 function mountApiModule(app, routeConfig, module) {
@@ -93,8 +120,8 @@ exports.makeExpressApp = function () {
   // Use body parser.
   app.use(express.bodyParser());
 
-  // Add handling of sessions.
-  authentication.addSessionHandling(app);
+  // Add handling of sessions
+  authentication.addAuthMaintenance(app);
 
   // Enable LESS.
   if (appConfig.lessPaths) {
@@ -111,7 +138,7 @@ exports.makeExpressApp = function () {
 
   // Setting up top level routes
   if (appConfig.routes) {
-    log.verbose('Adding routes.');
+    log.verbose('Adding routes:');
     appConfig.routes.forEach(function (routeConfig) {
       log.verbose('  Mounting %s route on %s.', routeConfig.type,
         routeConfig.route);
