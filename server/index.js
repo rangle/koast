@@ -1,3 +1,4 @@
+/** @namespace koast */
 /* global require, exports */
 
 'use strict';
