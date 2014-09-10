@@ -1,4 +1,4 @@
-/** @module lib/aws/s3upload */
+/** @module koast/aws */
 /* global exports, require */
 
 'use strict';

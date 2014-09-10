@@ -8,9 +8,12 @@ var config = require('./lib/config');
 var dbUtils = require('./lib/database/db-utils');
 var logger = require('./lib/log');
 var mongoMapper = require('./lib/mongo-mapper/mongo-mapper');
-var s3upload = require('./lib/aws/s3upload.js');
 var mailer = require('./lib/mailer');
 var koast = exports;
+
+// TODO refactor AWS code?!
+var aws = require('./lib/aws/s3upload.js');
+
 
 exports.makeExpressApp = appMaker.makeExpressApp;
 
@@ -49,12 +52,32 @@ exports.db = dbUtils;
 exports.mailer = mailer;
 //exports.mailer.makeMailer = mailer.mailerMaker;
 
-exports.mapper = {};
-exports.mapper.makeMongoMapper = mongoMapper.makeMapper;
+/**
+ * Mongo mapper module TODO
+ *
+ * @var mongoMapper
+ * @memberof koast
+ * @see module:koast/mongoMapper
+ */
+exports.mongoMapper = mongoMapper;
+//exports.mapper.makeMongoMapper = mongoMapper.makeMapper;
 
-exports.aws = {};
-exports.aws.makeS3FileUploader = s3upload.makeS3FileUploader;
+/**
+ * AWS utils TODO
+ *
+ * @var aws
+ * @memberof koast
+ * @see module:koast/aws  
+ */
+exports.aws = aws;
+//exports.aws.makeS3FileUploader = s3upload.makeS3FileUploader;
 
+/**
+ * Gets logger (TODO more info?)
+ *
+ * @function getLogger
+ * @memberof koast
+ */
 exports.getLogger = function() {
   return logger;
 };

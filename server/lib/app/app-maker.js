@@ -1,3 +1,4 @@
+/** @module lib/app/app-maker */
 /* global require, exports, __dirname */
 
 'use strict';
@@ -57,7 +58,7 @@ function mountApiSubroute (app, routeConfig, module, subroute) {
   ***REMOVED***
     } else {
       next();      
-***REMOVED***
+    }
   };
 
   // Now let's iterate over the different methods.
@@ -80,8 +81,8 @@ function mountApiSubroute (app, routeConfig, module, subroute) {
 function mountApiModule(app, routeConfig, module) {
   var modulePath = process.cwd() + '/' + routeConfig.module;
   log.verbose('    Module path:', modulePath);
-  var module = require(modulePath);
-  module.routes.forEach(function(subroute) {
+  var mod = require(modulePath);
+  mod.routes.forEach(function(subroute) {
     mountApiSubroute(app, routeConfig, module, subroute);
 ***REMOVED***
 }
