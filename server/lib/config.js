@@ -1,6 +1,4 @@
-/**
- * @module koast/config
- */
+/** @module koast/config */
 
 // A config loader module.
 //
