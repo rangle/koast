@@ -1,4 +1,4 @@
-/** @module lib/database/db-utils */
+/** @module koast/db */
 /* jshint expr:true */
 /* global require, exports */
 
@@ -133,7 +133,6 @@ exports.createSingleConnection = function (handle, dbConfig, schemas) {
  * Creates connections defined in the "databases" configuration.
  *
  * @function createConfiguredConnections
- * @memberof koast
  * @param  {Array}    subset       A list of keys specifying which databases to
  *                                 load. (Optional, defaults to all.)
  * @param  {Function} callback     A callback function called after every
@@ -174,7 +173,6 @@ exports.createConfiguredConnections = function (subset, callback) {
  * Provides the list of handles for available database connections.
  *
  * @function getConnectionHandles
- * @memberof koast
  * @return {Array}                 An array of strings representing connecition
  *                                 handles.
  */
@@ -187,7 +185,6 @@ exports.getConnectionHandles = function () {
  * immediately, whether or not it is ready.
  *
  * @function getConnectionNow
- * @memberof koast
  * @param  {String} handle         A connection handle.
  * @return {Object}                A mongoose connection object.
  */
@@ -219,7 +216,6 @@ exports.closeAllConnectionsNow = function () {
  * resolve to a connection when the connection is ready.
  *
  * @function getConnectionPromise
- * @memberof koast
  * @param  {String} handle         A connection handle.
  * @return {Object}                A promise that resolves to a mongoose
  *                                 connection object.

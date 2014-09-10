@@ -13,23 +13,58 @@ var mailer = require('./lib/mailer');
 var koast = exports;
 
 exports.makeExpressApp = appMaker.makeExpressApp;
-exports.setEnvironment = config.setEnvironment;
-exports.setConfigDirectory = config.setConfigDirectory;
-exports.getConfig = config.getConfig;
-exports.createDatabaseConnections = dbUtils.createConfiguredConnections;
-exports.getDatabaseConnectionPromise = dbUtils.getConnectionPromise;
-exports.getDatabaseConnectionNow = dbUtils.getConnectionNow;
-exports.getConnectionHandles = dbUtils.getConnectionHandles;
 
-exports.makeMailer = mailer.mailerMaker;
+/**
+ * Configuration module TODO
+ *
+ * @var config
+ * @memberof koast
+ * @see module:koast/config
+ */
+exports.config = config;
+//exports.config.setEnvironment = config.setEnvironment;
+//exports.config.setConfigDirectory = config.setConfigDirectory;
+//exports.config.getConfig = config.getConfig;
 
-exports.makeMongoMapper = mongoMapper.makeMapper;
-exports.makeS3FileUploader = s3upload.makeS3FileUploader;
+/**
+ * Database module TODO
+ *
+ * @var db
+ * @memberof koast
+ * @see module:koast/db
+ */
+exports.db = dbUtils;
+//exports.db.createDatabaseConnections = dbUtils.createConfiguredConnections;*/
+//exports.db.getDatabaseConnectionPromise = dbUtils.getConnectionPromise;
+//exports.db.getDatabaseConnectionNow = dbUtils.getConnectionNow;
+//exports.db.getConnectionHandles = dbUtils.getConnectionHandles;
+
+/**
+ * Mailer module TODO
+ *
+ * @var mailer
+ * @memberof koast
+ * @see module:koast/mailer
+ */
+exports.mailer = mailer;
+//exports.mailer.makeMailer = mailer.mailerMaker;
+
+exports.mapper = {};
+exports.mapper.makeMongoMapper = mongoMapper.makeMapper;
+
+exports.aws = {};
+exports.aws.makeS3FileUploader = s3upload.makeS3FileUploader;
 
 exports.getLogger = function() {
   return logger;
 };
 
+/**
+ * Run the webserver.
+ *
+ * @function serve
+ * @memberof koast
+ */
 exports.serve = function () {
   var log = koast.getLogger();
 
