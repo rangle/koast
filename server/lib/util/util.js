@@ -1,3 +1,4 @@
+/** @module lib/util */
 /* global require, exports, process */
 'use strict';
 
@@ -6,8 +7,10 @@ var Module = require('module');
 
 var log = require('../log');
 
-// Requires a module based on a path relative to current working directory.
-// Adapted https://github.com/kamicane/require-relative/.
+/**
+ * Requires a module based on a path relative to current working directory.
+ * Adapted https://github.com/kamicane/require-relative/.
+ */
 exports.requireRelative = function (requestedPath) {
   var rootPath = process.cwd();
   if (requestedPath[0] !== '.') {
