@@ -87,7 +87,7 @@ angular.module('koast-user', [
     function setUser(responseBody) {
       var valid = responseBody && responseBody.data;
       var newUser;
-      log.debug('Setting the user based on', responseBody.data);
+      log.debug('Setting the user based on', responseBody);
       if (!valid) {
         log.warn('Did not get back a valid user record.', responseBody);
         user.data = {};
