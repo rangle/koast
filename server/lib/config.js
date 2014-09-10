@@ -1,3 +1,5 @@
+/** @module lib/config */
+
 // A config loader module.
 //
 // This should not actually contain any configurations, but rather provides a
