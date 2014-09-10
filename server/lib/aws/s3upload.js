@@ -1,9 +1,15 @@
+/** @module lib/aws/s3upload */
 /* global exports, require */
 
 'use strict';
 
 var fs = require('fs');
 
+/**
+ * TODO
+ *
+ * @param {Object} options TODO
+ */
 exports.makeS3FileUploader = function (options) {
 
   var AWS;
