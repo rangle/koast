@@ -1,3 +1,4 @@
+/** @module lib/authentication/oauth */
 /* global require, exports */
 'use strict';
 
@@ -21,8 +22,14 @@ var oauthOptions = {
   }
 };
 
-// Looks up user in the database and generates an enveloped user record based
-// on that.
+/**
+ * Looks up user in the database and generates an enveloped user record based
+ * on that.
+ *
+ * @function getUserFromProfile
+ * @param {todo} providerAccounts  TODO
+ * @param {todo} profile  TODO
+ */
 exports.getUserFromProfile = function (providerAccounts, profile) {
   log.debug(profile);
   if (!profile) {
@@ -112,7 +119,15 @@ function saveNextUrl(req, res, next) {
   next();
 }
 
-// Sets up OAuth authentication for one provider.
+/**
+ * Sets up OAuth authentication for one provider.
+ *
+ * @function init
+ * @param {TODO} app TODO
+ * @param {TODO} provider TODO
+ * @param {TODO} config TODO
+ * @param {TODO} providerAccounts TODO
+ */
 exports.init = function (app, provider, config, providerAccounts) {
   var Strategy = strategies[provider];
   var handler = makeLoginHandler(provider, providerAccounts);

@@ -1,3 +1,4 @@
+/** @module lib/authentication/authentication */
 /* global require, exports */
 
 'use strict';

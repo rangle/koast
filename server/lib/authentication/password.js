@@ -1,3 +1,4 @@
+/** @module lib/authentication/password */
 /* globals require, exports */
 'use strict';
 
@@ -25,10 +26,10 @@ var SALT_WORK_FACTOR = 10;
  * Returns a promise which will be resolved if the user was succesfully saved
  * or rejected if an error occured.
  *
+ * @function saveUser
  * @param {Object} user
  * @param {String} password
  */
-
 exports.saveUser = function(user, password) {
   var deferred = Q.defer();
 
@@ -131,6 +132,14 @@ function handleErrorOrSuccess(err, result, response) {
   return response.send(200, result);
 }
 
+/**
+ * TODO
+ *
+ * @function setup
+ * @param {TODO} app TODO
+ * @param {TODO} users TODO
+ * @param {TODO} config TODO
+ */
 exports.setup = function(app, users, config) {
 
   // Used for mailing out that the user has RESET his password

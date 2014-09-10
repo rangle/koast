@@ -1,3 +1,4 @@
+/** @module lib/authentication/browserid */
 /* global exports */
 
 'use strict';
@@ -19,6 +20,12 @@ function makeVerifierRequest(body, callback) {
   request.end();
 }
 
+/**
+ * TODO
+ *
+ * @function makeAuthenticator
+ * @param  {todo}  userLookupFunction  TODO
+ */
 exports.makeAuthenticator = function (userLookupFunction) {
 
   return function browserIdAuthenticator(req, res) {
