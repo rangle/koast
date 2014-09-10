@@ -27,8 +27,8 @@ var SALT_WORK_FACTOR = 10;
  * or rejected if an error occured.
  *
  * @function saveUser
- * @param {Object} user
- * @param {String} password
+ * @param {Object} user TODO
+ * @param {String} password TODO
  */
 exports.saveUser = function(user, password) {
   var deferred = Q.defer();
