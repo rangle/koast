@@ -3,3 +3,4 @@ node_modules/*
 private/
 client/bower_components/
 .idea/
+docs/html

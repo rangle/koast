@@ -1,10 +1,11 @@
+/** @module lib/mongo-mapper/mongo-mapper */
 /* global require, exports */
 
 'use strict';
 
-/**
- * This module maps connect requests to mongo queries.
- */
+//
+// This module maps connect requests to mongo queries.
+
 
 var _ = require('underscore');
 var log = require('../log');
@@ -174,7 +175,8 @@ handlerFactories.auto = function(options) {
 
 /**
  * Creates a set of factories, which can then be used to create request
- * handlers.
+ * handlers.<br />
+ * <b><em>TODO: document get, put, post, del</em></b>
  *
  * @param  {Object} dbConnection   A mongoose database connection (ot)
  * @return {Object}                An object offering handler factory methods.
