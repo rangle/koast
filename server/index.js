@@ -91,9 +91,9 @@ exports.getLogger = function() {
 exports.serve = function () {
   var log = koast.getLogger();
 
-  koast.createDatabaseConnections()
+  koast.db.createConfiguredConnections()
     .then(function (connection) {
-      var appConfig = koast.getConfig('app');
+      var appConfig = koast.config.getConfig('app');
       var portNumber = Number(process.env.PORT || appConfig.portNumber);
       var app = koast.makeExpressApp();
       app.listen(portNumber);
