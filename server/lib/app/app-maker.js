@@ -22,6 +22,8 @@ function assertSubrouteField (subroute, fieldName) {
 
 function mountApiSubroute (app, routeConfig, module, subroute) {
   var path;
+  console.log(subroute);
+  console.log(module);
   var authFunction = subroute.authorization || module.defaults.authorization;
   var authorizationMiddleware;
   var handler = subroute.handler;
@@ -83,7 +85,7 @@ function mountApiModule(app, routeConfig, module) {
   log.verbose('    Module path:', modulePath);
   var mod = require(modulePath);
   mod.routes.forEach(function(subroute) {
-    mountApiSubroute(app, routeConfig, module, subroute);
+    mountApiSubroute(app, routeConfig, mod, subroute);
 ***REMOVED***
 }
 
