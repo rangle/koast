@@ -153,6 +153,7 @@ exports.createConfiguredConnections = function (subset, callback) {
   return Q.all(_.map(databases, function (database, index) {
     var schemas;
     var handle;
+    index = parseInt(index);
     // We want each database connection to have a key.
     if (index === 0) {
       handle = database.handle || '_';
