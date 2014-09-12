@@ -22,8 +22,6 @@ function assertSubrouteField (subroute, fieldName) {
 
 function mountApiSubroute (app, routeConfig, module, subroute) {
   var path;
-  console.log(subroute);
-  console.log(module);
   var authFunction = subroute.authorization || module.defaults.authorization;
   var authorizationMiddleware;
   var handler = subroute.handler;
