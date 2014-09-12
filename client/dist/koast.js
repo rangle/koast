@@ -44,6 +44,7 @@ angular.module('koast.http', [])
     }
 
     service.saveToken = function (tokenData) {
+      token = tokenData.token;
       _koastTokenKeeper.saveToken(tokenData);
 ***REMOVED***
 
@@ -417,7 +418,7 @@ angular.module('koast-resource', ['koast-user'])
     var service = {};
     service.addAuthHeaders = function (headers) {
       if (user.isSignedIn) {
-        headers['koast-auth-token'] = user.meta.authToken;
+        headers['koast-auth-token'] = user.meta.token;
         headers['koast-auth-token-timestamp'] = user.meta.timestamp;
         headers['koast-user'] = angular.toJson(user.data);
 ***REMOVED***
@@ -508,6 +509,7 @@ angular.module('koast-resource', ['koast-user'])
     // An auxiliary function to generate the part of the URL that identifies
     // the specific resource.
     function makeResourceIdentifier(template, params) {
+      
       if (!params) {
         return '';
 ***REMOVED*** else {
@@ -537,8 +539,8 @@ angular.module('koast-resource', ['koast-user'])
 
 // A service that offers high level methods for interacting with resources.
 .factory('_koastResourceGetter', ['_KoastResource', '_KoastServerHelper',
-  '_KoastEndpoint', '$http', '$q', '$log',
-  function (KoastResource, KoastServerHelper, KoastEndpoint, $http, $q, $log) {
+  '_KoastEndpoint', '$http', '$q', '$log','_koastHttp',
+  function (KoastResource, KoastServerHelper, KoastEndpoint, $http, $q, $log,_koastHttp) {
     'use strict';
     var service = {};
     var prefixes = {};
@@ -548,6 +550,7 @@ angular.module('koast-resource', ['koast-user'])
     // of resources. If options specify a singular resource, then we just
     // return that resource.
     function convertResultsToResources(results, options) {
+
       var resources = _.map(results, function(rawResult) {
         return new KoastResource(options.endpoint, rawResult, options);
   ***REMOVED***
@@ -583,9 +586,9 @@ angular.module('koast-resource', ['koast-user'])
 ***REMOVED***
 
       KoastServerHelper.addAuthHeaders(headers);
-      return $http.get(endpoint.makeGetUrl(params), getConfig)
+      return _koastHttp.get(endpoint.makeGetUrl(params), getConfig)
         .then(function (response) {
-          return convertResultsToResources(response.data, options);
+          return convertResultsToResources(response, options);
     ***REMOVED***
     }
 
@@ -764,9 +767,10 @@ angular.module('koast-user', [
     // Sets the user's data and meta data.
     // Returns true if the user is authenticated.
     function setUser(responseBody) {
+
       var valid = responseBody && responseBody.data;
       var newUser;
-      log.debug('Setting the user based on', responseBody.data);
+      log.debug('Setting the user based on', responseBody);
       if (!valid) {
         log.warn('Did not get back a valid user record.', responseBody);
         user.data = {};

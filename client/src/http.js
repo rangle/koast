@@ -44,6 +44,7 @@ angular.module('koast.http', [])
     }
 
     service.saveToken = function (tokenData) {
+      token = tokenData.token;
       _koastTokenKeeper.saveToken(tokenData);
 ***REMOVED***
 
