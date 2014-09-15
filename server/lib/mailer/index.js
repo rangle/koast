@@ -1,3 +1,4 @@
+/** @module koast/mailer */
 'use strict';
 
 var nodemailer = require('nodemailer'),
@@ -9,7 +10,12 @@ var nodemailer = require('nodemailer'),
 
 var log = require('../log');
 
-
+/**
+ * TODO
+ *
+ * @param {Object} passedConfigFilename TODO
+ * @returns {promise} TODO promise of sorts
+ */
 exports.mailerMaker = function(passedConfigFilename) {
   var configFilename = passedConfigFilename || 'mailer';
 
