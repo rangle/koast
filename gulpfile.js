@@ -6,7 +6,9 @@ var exec = require('child_process').exec;
 
 rg.setLogLevel('info');
 
-gulp.task('mocha', rg.mocha());
+gulp.task('mocha', rg.mocha({
+  files: 'lib/**/*.test.js'
+}));
 
 gulp.task('lint', rg.jshint({
   files: [
