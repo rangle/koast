@@ -10,7 +10,7 @@
   ],
   "main": "server/index.js",
   "bin": {
-    "koast": ". /bin/koast"
+    "koast": "./bin/koast"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
