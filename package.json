@@ -1,6 +1,6 @@
 {
   "name": "koast",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
@@ -10,7 +10,7 @@
   ],
   "main": "server/index.js",
   "bin": {
-    "koast": "./server/bin/koast"
+    "koast": "./bin/koast"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -54,5 +54,3 @@
     "sinon-chai": "^2.5.0"
   }
 }
-
-

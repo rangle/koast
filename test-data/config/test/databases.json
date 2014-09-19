@@ -4,14 +4,14 @@
     "host": "127.0.0.1",
     "port": "27017",
     "db": "koast1",
-    "schemas": "server/test-data/config/test/db1Schemas.js"
+    "schemas": "test-data/config/test/db1Schemas.js"
   },
   {
     "handle" : "db2",
     "host": "127.0.0.1",
     "port": "27017",
     "db": "koast2",
-    "schemas": "server/test-data/config/test/db2Schemas.js"
+    "schemas": "test-data/config/test/db2Schemas.js"
   }
 ]
 
