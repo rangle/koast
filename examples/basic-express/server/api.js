@@ -3,8 +3,8 @@
 'use strict';
 
 var koast = require('koast');
-var connection = koast.getDatabaseConnectionNow();
-var mapper = koast.makeMongoMapper(connection);
+var connection = koast.db.getConnectionNow();
+var mapper = koast.mongoMapper.makeMapper(connection);
 
 exports.defaults = {};
 exports.defaults.authorization = function defaultAuthorization(req, res) {
