@@ -9,6 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "koast": "0.2.3"
+    "koast": "0.4.x"
   }
 }

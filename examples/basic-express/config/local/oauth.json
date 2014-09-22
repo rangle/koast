@@ -1,7 +1,7 @@
 {
   "facebook" : {
-    "clientID": "700725026616584",
-    "clientSecret": "ca04939ad72aaad99d37f73723c35498",
-    "callbackURL": "http://localkoast.rangle.io:3000/auth/facebook/callback"
+    "clientID": "853173291394065",
+    "clientSecret": "0dee7702f5e20e917d077884ee9c9080",
+    "callbackURL": "http://localhost:3000/auth/facebook/callback"
   }
 }

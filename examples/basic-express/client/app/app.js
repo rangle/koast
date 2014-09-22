@@ -123,10 +123,10 @@ angular.module('sampleKoastClientApp', ['koast'])
   function (koast, $log) {
     'use strict';
     koast.init({
-      baseUrl: 'http://localkoast.rangle.io:3000',
+      baseUrl: 'http://localhost:3000',
       siteTitle: 'App Awesome'
 ***REMOVED***
-    koast.setApiUriPrefix('http://localkoast.rangle.io:3000/api/');
+    koast.setApiUriPrefix('/api/');
     koast.addEndpoint('robots', ':robotNumber', {
       useEnvelope: true
 ***REMOVED***

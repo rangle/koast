@@ -1,0 +1,22 @@
+{
+  "name": "koast-express-example",
+  "version": "0.0.0",
+  "homepage": "https://github.com/e-schultz/koast",
+  "authors": [
+    "Evan <evan@rangle.io>"
+  ],
+  "description": "sample app for koast",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "client/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.25",
+    "koast-angular": "~0.0.0"
+  }
+}
