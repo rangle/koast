@@ -10,6 +10,11 @@ gulp.task('mocha', rg.mocha({
   files: 'lib/**/*.test.js'
 }));
 
+gulp.task('mocha-watch', function () {
+  gulp.watch(['lib/**/*.js'], ['mocha']);
+***REMOVED***
+
+
 gulp.task('lint', rg.jshint({
   files: [
     'lib/**/*.js',
@@ -27,17 +32,18 @@ gulp.task('beautify', rg.beautify({
 
 
 var docGlobs = ['index.js',
-                'lib/**'];
+  'lib/**'
+];
 
-gulp.task('jsdoc', function() {
+gulp.task('jsdoc', function () {
   var cmdHead = 'jsdoc -d docs/html';
-  var cmd = docGlobs.reduceRight(function(x, y) {
+  var cmd = docGlobs.reduceRight(function (x, y) {
     return x + ' ' + y;
   }, cmdHead);
 
   console.log(cmd);
 
-  exec(cmd, function(err, stdout, stderr) {
+  exec(cmd, function (err, stdout, stderr) {
     if (err !== null) {
       console.log(stderr);
     } else {
@@ -46,7 +52,7 @@ gulp.task('jsdoc', function() {
 ***REMOVED***
 ***REMOVED***
 
-gulp.task('jsdoc-watch', function() {
+gulp.task('jsdoc-watch', function () {
   gulp.watch(docGlobs, ['jsdoc']);
 ***REMOVED***
 
@@ -60,4 +66,4 @@ gulp.task('dev', rg.nodemon({
 
 gulp.task('test', ['mocha']);
 
-gulp.task('default', ['lint', 'concat', 'mocha']);
+gulp.task('default', ['lint', 'mocha']);
