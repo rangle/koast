@@ -1,17 +1,27 @@
 'use strict';
 
 var gulp = require('gulp');
+var gulpUtil = require('gulp-util');
 var rg = require('rangle-gulp');
 var exec = require('child_process').exec;
 
 rg.setLogLevel('info');
 
 gulp.task('mocha', rg.mocha({
-  files: 'lib/**/*.test.js'
+  files: 'lib/**/*.test.js',
+  reporter: 'nyan'
+}));
+
+gulp.task('mocha-watch-run', rg.mocha({
+  files: 'lib/**/*.test.js',
+  reporter: 'nyan',
+  errorHandler: function (err) {
+    gulpUtil.log(err);
+  }
 }));
 
 gulp.task('mocha-watch', function () {
-  gulp.watch(['lib/**/*.js'], ['mocha']);
+  gulp.watch(['lib/**/*.js'], ['mocha-watch-run']);
 ***REMOVED***
 
 
