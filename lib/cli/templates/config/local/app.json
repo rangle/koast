@@ -1,0 +1,10 @@
+{
+  "portNumber": 3000,
+  "routes" : [
+    {
+      "route" : "/api",
+      "type": "module",
+      "module" : "server/api"    
+    }
+  ]
+}

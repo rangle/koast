@@ -48,7 +48,9 @@
     "rangle-gulp": "0.0.7",
     "serve-favicon": "^2.1.4",
     "underscore": "~1.5.2",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "gulp-install": "^0.2.0",
+    "gulp-conflict": "^0.2.0"
   },
   "devDependencies": {
     "gulp": "^3.8.7",

@@ -1,0 +1,14 @@
+{
+  "name": "koast-express-example",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "koast": "0.4.x"
+  }
+}
