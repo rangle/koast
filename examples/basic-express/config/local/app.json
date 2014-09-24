@@ -11,7 +11,7 @@
     {
       "route" : "/app",
       "type": "static",
-      "path" : "client/app"    
+      "path" : "client/app"
     },
     {
       "route" : "/bower",
@@ -21,7 +21,7 @@
     {
       "route" : "/api",
       "type": "module",
-      "module" : "server/api"    
+      "module" : "server/api"
     }
   ]
 }
