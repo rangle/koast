@@ -1,0 +1,4 @@
+{
+  "databases": "require:./test/databases.json",
+  "anotherDb": "require:./test/anotherDb.json"
+}

@@ -67,7 +67,7 @@ exports.mongoMapper = mongoMapper;
  *
  * @var aws
  * @memberof koast
- * @see module:koast/aws  
+ * @see module:koast/aws
  */
 exports.aws = aws;
 //exports.aws.makeS3FileUploader = s3upload.makeS3FileUploader;
@@ -78,7 +78,7 @@ exports.aws = aws;
  * @function getLogger
  * @memberof koast
  */
-exports.getLogger = function() {
+exports.getLogger = function () {
   return logger;
 };
 
@@ -93,6 +93,7 @@ exports.serve = function () {
 
   koast.db.createConfiguredConnections()
     .then(function (connection) {
+      console.log('yo?');
       var appConfig = koast.config.getConfig('app');
       var portNumber = Number(process.env.PORT || appConfig.portNumber);
       var app = koast.makeExpressApp();
@@ -106,4 +107,3 @@ exports.serve = function () {
 ***REMOVED***
 ***REMOVED***
 };
-

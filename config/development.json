@@ -1,0 +1,9 @@
+{
+  "authentication": "require:./development/authentication.json",
+  "cors": "require:./development/cors.json",
+  "databases": "require:./development/databases.json",
+  "secrets": "require:./development/secrets.json",
+  "app": {
+    "portNumber": 3001
+  }
+}

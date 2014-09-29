@@ -1,0 +1,5 @@
+{
+  "authentication": "require:./development/authentication.json",
+  "cors": "require:./development/cors.json",
+  "secrets": "require:./development/secrets.json"
+}
