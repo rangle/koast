@@ -1,0 +1,10 @@
+{
+  "app": {
+    "indexHtml": "path:../public/index.html",
+    "lessPaths": [
+      ["/app", "client/app"]
+    ],
+    "portNumber": 8080
+  }
+
+}
