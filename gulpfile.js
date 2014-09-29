@@ -46,7 +46,7 @@ var docGlobs = ['index.js',
 ];
 
 gulp.task('jsdoc', function () {
-  var cmdHead = 'jsdoc -d docs/html';
+  var cmdHead = './node_modules/.bin/jsdoc -d docs/html';
   var cmd = docGlobs.reduceRight(function (x, y) {
     return x + ' ' + y;
   }, cmdHead);
