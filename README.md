@@ -26,10 +26,18 @@ Someone tell me :P
 Well, son... A koast module is a javscript file which exports an object
 containing the property `koastModule`. *_wow_*
 
-*Make a table here?*
-This `koastModule` should contain a `router` property. Which is just an
-(FIXME LINK) express 4 router. We'll show you how to define, and use your
+
+A koast module contains the following:
+
+Property |  Required | Data
+---------------------------
+router   |  true     |  [Express 4 router](http://expressjs.com/4x/api.html#router)
+defaults |  true     |  Default handlers, **must** contain `authorization` function.
+
+
+We'll show you how to define, and use your
 own `koastModule`s to build an application server.
+
 
 
 ## Starting your Koast app
@@ -66,7 +74,7 @@ koast.serve();
 
 Let's make our first `koastModule`!
 
-```
+```javascript
 var express = require('express');
 var router = express.Router();
 
