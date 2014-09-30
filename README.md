@@ -29,10 +29,10 @@ containing the property `koastModule`. *_wow_*
 
 A koast module contains the following:
 
-Property |  Required | Data
----------------------------
-router   |  true     |  [Express 4 router](http://expressjs.com/4x/api.html#router)
-defaults |  true     |  Default handlers, **must** contain `authorization` function.
+| Property | Required | Data |
+|----------------------------|
+| router   |  true    |  [Express 4 router](http://expressjs.com/4x/api.html#router)  |
+| defaults |  true    |  Default handlers, **must** contain `authorization` function. |
 
 
 We'll show you how to define, and use your
