@@ -1,0 +1,30 @@
+- [ ]  Bootstrapper -> App maker becomes Boot Strapper
+  - [ ] mountApiModule/mountApiSubModule -> loop through module/routes dfined in app.json
+  - [ ] Ensure static loading still works
+  - [ ] Mount API -> uses the new exports of koast modules, mount with express 4 routers
+  - [ ] *note: may need to keep 'mountApiSubRoute' around until Authentication refactor is done
+  - [ ] Ensure 'simple case' of mongo-mapper modules/routes load - single methods
+  - [ ] Get complex-cases working - auto - (returning array of handlers)
+  - [ ] Get the ability to mount auth middleware/any middleware working
+- [ ] Authentication - exports to match new 'koast module api' definition
+  - [ ] Refactor to export same style as modules expected by module loader
+  - [ ] Update bootstrapper to load them
+- [ ] Authentication - clean up/unify local vs social auth handleing
+  - [ ] do we need 'user' and 'userprovider' accounts - can we use one schema/store?
+  - [ ] allow the schema name to be configurable, not hard coded
+- [ ] Authentication - let it become optional
+- [ ] Password - refactor to match new koast module format
+- [ ] Configuration - adopt confit, shortstop, short-stop handler
+  - [ ] meddleware?
+  - [ ] Be able to clearly show where config files are loaded from
+  - [ ] Be able to show where which values came from which files
+  - [ ] Self-debugging assertion messages, ie: 'you have cookies enabled, but no secerete key defined', and be able to specify enviroment/file/location
+- [ ] Refactor parts of bootstrapper to be loadable / configurable with meddlewhere where appropiate
+  - [ ] CORS
+  - [ ] body parser
+  - [ ] less middleware
+- [ ] Refactor parts of maintence.addAuthMaint to be confirable via meddlewhere
+- [ ] Integrate notification work from Welcast 
+- [ ] Update welcast to work with new changes
+- [ ] Update brained.io to work with new changes
+
