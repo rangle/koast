@@ -48,8 +48,7 @@ own `koastModule`s to build an application server.
 ├── client
 │   └── index.html
 ├── config
-│   └── local
-│       └── app.json
+│   └── app.json
 ├── package.json
 └── server
     ├── api.js
@@ -75,6 +74,8 @@ koast.serve();
 Let's make our first `koastModule`!
 
 ```javascript
+// server/api.js
+
 var express = require('express');
 var router = express.Router();
 
@@ -99,5 +100,14 @@ The first thing we're going to want to configure, is our koastModule.
 ### Connecting the application
 
 ```javascript
-todo: config
+{
+  "app": {
+    "portNumber": 3001,
+    "routes": [{
+      "route": "/api/v1",
+      "type": "module",
+      "module": "server/api"
+    }]
+  }
+}
 ```
