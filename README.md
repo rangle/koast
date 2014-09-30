@@ -8,4 +8,74 @@ To use git version of the module, install it locally using npm link:
 
   https://www.npmjs.org/doc/cli/npm-link.html
 
-To use the executable, install the package globally (with -g).
+To use the executable, install the package globally (with -g). 
+
+
+# So you wanna make a Koast app?
+
+
+## Some things you need to know
+
+### WTF is a koastModule?
+
+*FIXME*
+Well, son... A koast module is a javscript file which exports an object
+containing the property `koastModule`. *_wow_*
+
+*Make a table here?*
+This `koastModule` should contain a `router` property. Which is just an
+(FIXME LINK) express 4 router. We'll show you how to define, and use your
+own `koastModule`s to build an application server.
+
+
+## Starting your Koast app
+
+### mkdir -p, touch, whatever, Go!
+
+```
+├── client
+│   └── index.html
+├── config
+│   └── local
+│       ├── app.json
+├── data
+│   ├── robots.json
+│   └── users.json
+├── package.json
+└── server
+    ├── api.js
+    ├── app.js
+    └── schemas.js
+```
+
+### The server
+
+The "proper" http server should be located in `server/app`. You will typically
+launch your application with `node server/app.js`.
+
+```javascript
+// server/app.js
+
+var koast = require('koast');
+koast.config.setEnvironment();
+koast.serve();
+```
+
+### Defining a simple API
+
+Let's make our first `koastModule`!
+
+```
+/* global exports, require */
+
+'use strict';
+
+var koast = require('koast');
+var connection = koast.db.getConnectionNow();
+var mapper = koast.mongoMapper.makeMapper(connection);
+
+exports.defaults = {};
+exports.defaults.authorization = function defaultAuthorization(req, res) {
+  return true;
+};
+```
