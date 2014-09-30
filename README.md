@@ -22,9 +22,8 @@ Someone tell me :P
 
 ### WTF is a koastModule?
 
-*FIXME*
 Well, son... A koast module is a javscript file which exports an object
-containing the property `koastModule`. *_wow_*
+containing the property `koastModule` ... *_wow_*
 
 
 A koast module contains the following:
@@ -43,14 +42,14 @@ own `koastModule`s to build an application server.
 
 ## Starting your Koast app
 
-### mkdir -p, touch, whatever, Go!
+#### mkdir -p, touch, whatever, Go!
 
 ```
 ├── client
 │   └── index.html
 ├── config
 │   └── local
-│       ├── app.json
+│       └── app.json
 ├── package.json
 └── server
     ├── api.js
@@ -71,7 +70,7 @@ koast.config.setEnvironment();
 koast.serve();
 ```
 
-### Defining a simple koastModule
+### Hello, koastModules!
 
 Let's make our first `koastModule`!
 
@@ -88,4 +87,17 @@ module.exports = exports = {
     router: router
   }
 };
+```
+
+Be patient, you'll soon find out how to hook up your API to the server.
+
+
+## Configuring your koast application
+
+The first thing we're going to want to configure, is our koastModule.
+
+### Connecting the application
+
+```javascript
+todo: config
 ```
