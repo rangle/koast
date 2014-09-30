@@ -14,7 +14,7 @@ var koast = exports;
 // TODO refactor AWS code?!
 var aws = require('./lib/aws/s3upload.js');
 
-
+exports.koastRouter = require('./lib/koast-router');
 exports.makeExpressApp = appMaker.makeExpressApp;
 
 /**
