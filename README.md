@@ -42,9 +42,6 @@ own `koastModule`s to build an application server.
 ├── config
 │   └── local
 │       ├── app.json
-├── data
-│   ├── robots.json
-│   └── users.json
 ├── package.json
 └── server
     ├── api.js
