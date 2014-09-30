@@ -16,6 +16,10 @@ To use the executable, install the package globally (with -g).
 
 ## Some things you need to know
 
+### WTF does koast even do?
+
+Someone tell me :P
+
 ### WTF is a koastModule?
 
 *FIXME*
@@ -61,21 +65,21 @@ koast.config.setEnvironment();
 koast.serve();
 ```
 
-### Defining a simple API
+### Defining a simple koastModule
 
 Let's make our first `koastModule`!
 
 ```
-/* global exports, require */
+var express = require('express');
+var router = express.Router();
 
-'use strict';
+router.use('/world', function(req, res) {
+  res.send('Hello, koast!');
+});
 
-var koast = require('koast');
-var connection = koast.db.getConnectionNow();
-var mapper = koast.mongoMapper.makeMapper(connection);
-
-exports.defaults = {};
-exports.defaults.authorization = function defaultAuthorization(req, res) {
-  return true;
+module.exports = exports = {
+  koastModule: {
+    router: router
+  }
 };
 ```
