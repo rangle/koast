@@ -35,6 +35,8 @@
     "express": "4.x",
     "express-jwt": "^0.3.1",
     "express-session": "^1.8.2",
+    "gulp-conflict": "^0.2.0",
+    "gulp-install": "^0.2.0",
     "gulp-util": "^3.0.1",
     "jsdoc": "~3.3.0",
     "jsonwebtoken": "^1.1.0",
@@ -50,14 +52,13 @@
     "path": "^0.4.9",
     "q": "~1.0.0",
     "rangle-gulp": "0.0.7",
+    "rekuire": "^0.1.5",
     "serve-favicon": "^2.1.4",
     "shortstop": "^1.0.1",
     "shortstop-handlers": "^1.0.0",
     "shortstop-resolve": "^1.0.1",
     "underscore": "~1.5.2",
-    "winston": "~0.7.2",
-    "gulp-install": "^0.2.0",
-    "gulp-conflict": "^0.2.0"
+    "winston": "~0.7.2"
   },
   "devDependencies": {
     "gulp": "^3.8.7",
