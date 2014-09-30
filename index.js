@@ -93,7 +93,6 @@ exports.serve = function () {
 
   koast.db.createConfiguredConnections()
     .then(function (connection) {
-      console.log('yo?');
       var appConfig = koast.config.getConfig('app');
       var portNumber = Number(process.env.PORT || appConfig.portNumber);
       var app = koast.makeExpressApp();
