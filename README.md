@@ -84,6 +84,7 @@ router.use('/world', function(req, res) {
 });
 
 module.exports = exports = {
+  defaults: { authorization: function() { return true; }},
   koastModule: {
     router: router
   }
@@ -111,3 +112,6 @@ The first thing we're going to want to configure, is our koastModule.
   }
 }
 ```
+
+This will load the express router from server/api and mount it to
+`/api/v1/`. So the route `/api/v1/world` will be accessible.
