@@ -1,4 +1,4 @@
 {
-  "databases": "require:./test/databases.json",
-  "anotherDb": "require:./test/anotherDb.json"
+  "databases": "import:./test/databases.json",
+  "anotherDb": "import:./test/anotherDb.json"
 }
