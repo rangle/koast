@@ -1,17 +1,13 @@
-[
-  {
-    "handle" : "db1",
-    "host": "127.0.0.1",
-    "port": "27017",
-    "db": "koast1",
-    "schemas": "test-data/config/test/db1Schemas.js"
-  },
-  {
-    "handle" : "db2",
-    "host": "127.0.0.1",
-    "port": "27017",
-    "db": "koast2",
-    "schemas": "test-data/config/test/db2Schemas.js"
-  }
-]
-
+[{
+  "handle": "db1",
+  "host": "127.0.0.1",
+  "port": "27017",
+  "db": "koast1",
+  "schemas": "./test-data/config/test/db1Schemas.js"
+}, {
+  "handle": "db2",
+  "host": "127.0.0.1",
+  "port": "27017",
+  "db": "koast2",
+  "schemas": "./test-data/config/test/db2Schemas.js"
+}]
