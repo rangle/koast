@@ -16,11 +16,11 @@ To use the executable, install the package globally (with -g).
 
 ## Some things you need to know
 
-### WTF does koast even do?
+### What does koast even do?
 
 Someone tell me :P
 
-### WTF is a koastModule?
+### What is a koastModule?
 
 Well, son... A koast module is a javscript file which exports an object
 containing the property `koastModule` ... *_wow_*
