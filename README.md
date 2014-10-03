@@ -8,7 +8,7 @@ To use git version of the module, install it locally using npm link:
 
   https://www.npmjs.org/doc/cli/npm-link.html
 
-To use the executable, install the package globally (with -g). 
+To use the executable, install the package globally (with -g).
 
 
 # So you wanna make a Koast app?
