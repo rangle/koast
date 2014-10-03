@@ -23,11 +23,11 @@ function robotAnnotator (req, result, res) {
   if (isOwner(req, result)) {
     result.meta.can.edit = true;
   }
-};
+}
 
 function robotQueryDecorator (query, request, response) {
   // query.owner = 'luke';
-};
+}
 
 exports.routes = [
   {
