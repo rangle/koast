@@ -1,6 +1,6 @@
 {
   "name": "koast",
-  "version": "0.4.2",
+  "version": "0.4.3@rc.1",
   "description": "A Thin Server with an Attitude",
   "contributors": [
     {
