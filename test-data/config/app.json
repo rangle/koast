@@ -5,6 +5,21 @@
       ["/app", "client/app"]
     ],
     "portNumber": 8080
+  },
+  "authentication": {
+    "strategy": "password",
+    "maintenance": "token"
+  },
+  "cors": {
+
+    "origin": "*",
+    "headers": "X-Requested-With, Content-Type, Authorization",
+    "methods": "GET,POST,PUT,DELETE,OPTIONS, Authorization",
+    "credentials": true
+
+  },
+  "secrets": {
+    "authTokenSecret": "catsaretheinternet"
   }
 
 }
