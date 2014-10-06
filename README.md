@@ -65,8 +65,8 @@ launch your application with `node server/app.js`.
 // server/app.js
 
 var koast = require('koast');
-koast.config.setEnvironment();
-koast.serve();
+koast.config.loadConfiguration();
+koast.config.whenReady.then(koast.serve);
 ```
 
 ### Hello, koastModules!

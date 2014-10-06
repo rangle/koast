@@ -78,7 +78,7 @@ exports.aws = aws;
  * @function getLogger
  * @memberof koast
  */
-exports.getLogger = function () {
+exports.getLogger = function() {
   return logger;
 };
 
@@ -88,18 +88,19 @@ exports.getLogger = function () {
  * @function serve
  * @memberof koast
  */
-exports.serve = function () {
+exports.serve = function() {
+
   var log = koast.getLogger();
 
   koast.db.createConfiguredConnections()
-    .then(function (connection) {
+    .then(function(connection) {
       var appConfig = koast.config.getConfig('app');
       var portNumber = Number(process.env.PORT || appConfig.portNumber);
       var app = koast.makeExpressApp();
       app.listen(portNumber);
       log.info('Listening on ', portNumber);
     })
-    .then(null, function (error) {
+    .then(null, function(error) {
       log.error('Error:', error);
       if (error.stack) {
         log.error(error.stack);

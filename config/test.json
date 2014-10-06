@@ -1,5 +1,0 @@
-{
-  "authentication": "import:./development/authentication.json",
-  "cors": "import:./development/cors.json",
-  "secrets": "import:./development/secrets.json"
-}
