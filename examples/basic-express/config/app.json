@@ -1,0 +1,30 @@
+{
+  "app": {
+    "portNumber": 3000,
+    "lessPaths": [
+      ["/app", "client/app"]
+    ],
+    "indexHtml": "client/index.html",
+    "routes": [{
+      "route": "/app",
+      "type": "static",
+      "path": "client/app"
+    }, {
+      "route": "/bower",
+      "type": "static",
+      "path": "client/bower_components"
+    }, {
+      "route": "/api",
+      "type": "module",
+      "module": "server/lib/api"
+    }]
+  },
+  "authentication": "import:./development/authentication.json",
+  "cors": "import:./development/cors.json",
+  "databases": "import:./development/databases.json",
+  "secrets": {
+    "authTokenSecret": "catsaretheinternet"
+  },
+  "oauth": "import:./development/oauth.json"
+
+}
