@@ -21,7 +21,7 @@
     {
       "route" : "/api",
       "type": "module",
-      "module" : "server/api"
+      "module" : "server/lib/api"
     }
   ]
 }

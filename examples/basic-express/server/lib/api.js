@@ -5,9 +5,11 @@
 var koast = require('koast');
 var connection = koast.db.getConnectionNow();
 var mapper = koast.mongoMapper.makeMapper(connection);
+var koastRouter = require('koast').koastRouter;
+var defaults = {};
 
-exports.defaults = {};
-exports.defaults.authorization = function defaultAuthorization(req, res) {
+defaults = {};
+defaults.authorization = function defaultAuthorization(req, res) {
   return true;
 };
 
@@ -29,7 +31,7 @@ function robotQueryDecorator (query, request, response) {
   // query.owner = 'luke';
 }
 
-exports.routes = [
+var routes = [
   {
     method: 'get',
     route: 'robots',
@@ -50,7 +52,7 @@ exports.routes = [
     })
   },
   {
-    method: 'del',
+    method: 'delete',
     route: 'robots/:robotNumber',
     handler: mapper.del('robots')
   },
@@ -65,3 +67,11 @@ exports.routes = [
     handler: mapper.post('robots')
   }
 ];
+
+module.exports =
+{
+  koastModule: {
+    defaults: defaults,
+    router: koastRouter(routes,defaults)
+  }
+}
