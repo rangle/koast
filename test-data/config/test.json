@@ -1,4 +1,10 @@
 {
   "databases": "import:./test/databases.json",
-  "anotherDb": "import:./test/anotherDb.json"
+  "anotherDb": "import:./test/anotherDb.json",
+  "aws": {
+    "global": {
+      "x": "xval",
+      "y": "yval"
+    }
+  }
 }

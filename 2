@@ -10,48 +10,36 @@ var fs = require('fs');
  *
  * @param {Object} options TODO
  */
-exports.makeS3FileUploader = function (awsOpts, s3opts) {
+exports.makeS3FileUploader = function (s3opts) {
 
   var AWS;
   var s3;
 
   try {
     AWS = require('aws-sdk');
-
-    // Add properties of awsOpts to AWS.config
-    for (var key in awsOpts) {
-      if (awsOpts.hasOwnProperty(key)) {
-        AWS.config[key] = awsOpts[key];
-      }
-    }
-
-
+    // Add properties to AWS.config object
+    var awsConfig = new AWS.config.loadFromPath(s3opts.configFile);
     s3 = new AWS.S3();
   } catch (e) {
     throw e;
   }
 
   return function (req, res) {
-
-    var file = req.files.attachments;
-
+    var file = req.files.attachment.file;
     var key = s3opts.makeKey(req);
     var params = {
       Bucket: s3opts.bucket,
       Key: key,
-      Body: fs.createReadStream(file.path),
+      Body: fs.createReadStream(req.files.attachment.file.path),
       ACL: s3opts.acl,
-      ContentType: file.mimetype
+      ContentType: file.type
     };
-
     s3.putObject(params, function (err) {
       if (err) {
-        console.log(err);
         throw err;
       } else {
         s3opts.respond(req, res, key);
       }
     });
-
   };
 };
