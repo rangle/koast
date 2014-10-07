@@ -58,7 +58,10 @@
     "shortstop-handlers": "^1.0.0",
     "shortstop-resolve": "^1.0.1",
     "underscore": "~1.5.2",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "connect-busboy": "0.0.2",
+    "supertest": "^0.14.0",
+    "multer": "^0.1.4"
   },
   "devDependencies": {
     "gulp": "^3.8.7",

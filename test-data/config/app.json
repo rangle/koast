@@ -20,6 +20,12 @@
   },
   "secrets": {
     "authTokenSecret": "catsaretheinternet"
+  },
+
+  "aws": {
+    "s3": {
+      "bucket": "bucketname"
+    }
   }
 
 }
