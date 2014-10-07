@@ -9,11 +9,11 @@ function hashPassword(password) {
     bcrypt.hash(password, salt, function (err, hash) {
       if (err) {
         console.error('Could not hash password:', err);
-***REMOVED*** else {
+      } else {
         console.log(hash);
-***REMOVED***
-***REMOVED***
-***REMOVED***
+      }
+    });
+  });
 }
 
 hashPassword('x');

@@ -104,6 +104,6 @@ exports.serve = function() {
       log.error('Error:', error);
       if (error.stack) {
         log.error(error.stack);
-***REMOVED***
-***REMOVED***
+      }
+    });
 };

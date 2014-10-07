@@ -30,7 +30,7 @@ Koast Modules are expected to export an object with a defaults object, and a rou
 ```javascript
 // my module
 
-***REMOVED***
+var express = require('express');
 var router = express.Router();
 // setup module & router
 
@@ -95,12 +95,12 @@ Let's make our first `koastModule`!
 ```javascript
 // server/lib/api.js
 
-***REMOVED***
+var express = require('express');
 var router = express.Router();
 
 router.use('/world', function(req, res) {
   res.send('Hello, koast!');
-***REMOVED***
+});
 
 module.exports = exports = {
   defaults: { authorization: function() { return true; }},

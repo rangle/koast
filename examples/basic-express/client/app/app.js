@@ -11,12 +11,12 @@ angular.module('sampleKoastClientApp', ['koast'])
     // Initiates login.
     $scope.login = function(provider) {
       koast.user.initiateOauthAuthentication(provider);
-***REMOVED***
+    };
 
     // Logs out the user.
     $scope.logout = function(provider) {
       koast.user.logout(provider);
-***REMOVED***
+    };
 
     // Registeres the user if the provided username is available.
     $scope.register = function() {
@@ -25,13 +25,13 @@ angular.module('sampleKoastClientApp', ['koast'])
       koast.user.checkUsernameAvailability(username)
         .then(function(isAvailable) {
           if (isAvailable) {
-            return koast.user.registerSocial({username: username***REMOVED***
-  ***REMOVED*** else {
+            return koast.user.registerSocial({username: username});
+          } else {
             window.alert('Username taken!');
-  ***REMOVED***
-***REMOVED***)
+          }
+        })
         .then(null, $log.error);
-***REMOVED***
+    };
 
     // Attach the user service to the scope.
     $scope.user = koast.user;
@@ -45,9 +45,9 @@ angular.module('sampleKoastClientApp', ['koast'])
           robots.forEach(function(robot) {
             if (robot.robotNumber > maxNumber) {
               maxNumber = robot.robotNumber;
-***REMOVED***
-      ***REMOVED***
-  ***REMOVED*** $log.error);
+            }
+          });
+        }, $log.error);
       $scope.robotStatus = {};
     }
 
@@ -56,12 +56,12 @@ angular.module('sampleKoastClientApp', ['koast'])
       if (status==='success') {
         return function() {
           $scope.robotStatus[robotNumber] = 'Success!';
-***REMOVED***;
-***REMOVED*** else {
+        };
+      } else {
         return function(error) {
           $scope.robotStatus[robotNumber] = 'Oops: ' + error.toString();
-***REMOVED***;
-***REMOVED***
+        };
+      }
     }
 
     // Saves a robot upon button click.
@@ -69,14 +69,14 @@ angular.module('sampleKoastClientApp', ['koast'])
       robot.save()
         .then(makeRobotStatusUpdater('success', robot.robotNumber))
         .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
-***REMOVED***
+    };
 
     // Deletes a robot.
     $scope.deleteRobot = function (robot) {
       robot.delete()
         .then(makeRobotStatusUpdater('success', robot.robotNumber))
         .then(null, makeRobotStatusUpdater('error', robot.robotNumber));
-***REMOVED***
+    };
 
     // Creates a new robot and saves it.
     $scope.createRobot = function() {
@@ -85,15 +85,15 @@ angular.module('sampleKoastClientApp', ['koast'])
         robotNumber: maxNumber,
         robotName: 'Marvin90',
         owner: 'yuri'
-***REMOVED***;
+      };
       koast.createResource('robots', newRobotData)
         .then(function() {
-          return koast.getResource('robots', {robotNumber: maxNumber***REMOVED***
-***REMOVED***)
+          return koast.getResource('robots', {robotNumber: maxNumber});
+        })
         .then(function(newRobot) {
           $scope.robots.push(newRobot);
-  ***REMOVED*** $log.error);
-***REMOVED***
+        }, $log.error);
+    };
 
     // Now onto things that execute when the controller is loaded.
     // First we wait until user's login status is known.
@@ -101,7 +101,7 @@ angular.module('sampleKoastClientApp', ['koast'])
       .then(function(status) {
         var query = {
           robotNumber: 1
-***REMOVED***;
+        };
 
         $log.debug('Looking good');
 
@@ -109,12 +109,12 @@ angular.module('sampleKoastClientApp', ['koast'])
         koast.getResource('robots', query)
           .then(function (robot) {
             $scope.myRobot = robot;
-    ***REMOVED*** $log.error);
+          }, $log.error);
 
         // And reload the robot list.
         reload();
 
-***REMOVED***)
+      })
       .then(null, $log.error);
   }
 ])
@@ -125,10 +125,10 @@ angular.module('sampleKoastClientApp', ['koast'])
     koast.init({
       baseUrl: 'http://localhost:3000',
       siteTitle: 'App Awesome'
-***REMOVED***
+    });
     koast.setApiUriPrefix('/api/');
     koast.addEndpoint('robots', ':robotNumber', {
       useEnvelope: true
-***REMOVED***
+    });
   }
 ]);

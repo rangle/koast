@@ -22,7 +22,7 @@ gulp.task('mocha-watch-run', rg.mocha({
 
 gulp.task('mocha-watch', function () {
   gulp.watch(['lib/**/*.js'], ['mocha-watch-run']);
-***REMOVED***
+});
 
 
 gulp.task('lint', rg.jshint({
@@ -59,12 +59,12 @@ gulp.task('jsdoc', function () {
     } else {
       console.log('Compiled JSDoc', stdout);
     }
-***REMOVED***
-***REMOVED***
+  });
+});
 
 gulp.task('jsdoc-watch', function () {
   gulp.watch(docGlobs, ['jsdoc']);
-***REMOVED***
+});
 
 
 

@@ -2,7 +2,7 @@
 
 'use strict';
 
-***REMOVED***
+var expect = require('chai').expect;
 
 var koast = require('../index');
 koast.setConfigDirectory('tests/config/');
@@ -18,12 +18,12 @@ describe('Basic app setup.', function () {
         expect(connection).to.not.be.undefined;
         console.log('Good');
         done();
-  ***REMOVED***
-***REMOVED***
+      });
+  });
 
   it('Make an app', function() {
     var app = koast.makeExpressApp(appConfig);
     expect(app).to.not.be.undefined;
-***REMOVED***
+  });
 
-***REMOVED***
+});
