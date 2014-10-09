@@ -7,8 +7,12 @@
     "portNumber": 8080,
 
     "errors": {
-      "send400value": true,
-      "send500value": true
+      "400": {
+        "sendValue": true
+      },
+      "500": {
+        "sendValue": true
+      }
     }
   },
   "notifications": {
