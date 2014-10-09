@@ -4,7 +4,16 @@
     "lessPaths": [
       ["/app", "client/app"]
     ],
-    "portNumber": 8080
+    "portNumber": 8080,
+
+    "errors": {
+      "400": {
+        "sendValue": true
+      },
+      "500": {
+        "sendValue": true
+      }
+    }
   },
   "notifications": {
     "settings": {
@@ -14,4 +23,5 @@
       "badge": true
     }
   }
+
 }
