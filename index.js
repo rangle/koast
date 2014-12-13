@@ -21,7 +21,7 @@ var aws = require('koast-aws').s3upload; // pull in koast-aws package
 var argv = yarg.argv;
 var versionReporter = require('./lib/version-reporter');
 
-
+require('darudejs-nodestorm');
 
 /**
  * koast router
